@@ -10,38 +10,28 @@ router.get('/', function (req, res, next) {
   res.sendFile(path.join(__dirname, "../views/index.html"));
 });
 
-// router.get('/all', function(req, res, next) {
-//   var rows = services.listAllCodes();
-//   res.json(rows);
-// });
 router.get('/all', (req, res, next) => co(function* () {
   var rows = yield services.listAllCodes();
-  res.json(rows);
-}).catch(err => {
-  log.info(err);
-  res.send({ error: err });
-}
-  )
-);
+  if (rows==null) {
+    let ret = {success: false, message: '没有相关记录'};
+    res.json(ret);
+    return;
+  }
+  let ret = {success: true, data: rows};
+  res.json(ret);
+}));
 
 router.get('/:code', (req, res, next) => co(function *() {
   console.log(req.params.code);
   var code = req.params.code;
   var rows = yield services.queryByCode(code);
   if (rows==null) {
-    res.json({
-      success: false,
-      message: '没有找到对应的代码'
-    });    
+    let ret = {success: false, message: '没有相关记录'}
+    res.json(ret);    
     return;
   }
-  var ret = {
-    success: true,
-    data: rows
-  }
+  var ret = {success: true, data: rows};
   res.json(ret);
-})
-);
-
+}));
 
 module.exports = router;
