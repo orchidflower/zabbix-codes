@@ -25,7 +25,8 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item><el-button type="primary" icon="information" @click="handleView(row)" >详细</el-button></el-dropdown-item>
                   <el-dropdown-item><el-button type="primary" icon="edit">编辑</el-button></el-dropdown-item>
-                  <el-dropdown-item><el-button type="primary" icon="delete">删除</el-button></el-button></el-dropdown-item>
+                  <el-dropdown-item><el-button type="primary" icon="delete">删除</el-button></el-dropdown-item>
+                  <el-dropdown-item><el-button type="primary" icon="more" @click="handleRedirect(row)">更多</el-button></el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>           
             </el-table-column>
@@ -88,6 +89,11 @@ export default {
       this.editForm.title = row.title;
       this.editForm.description = row.description;
       this.editForm.solution = row.solution;
+    },
+    handleRedirect: function(row) {
+      let code = row.code;
+      console.log('#/codes/'+code);
+      this.$router.push({path: '/codes/'+code});
     },
     onSubmit: function() {
       console.log('submit!');
