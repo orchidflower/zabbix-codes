@@ -1,15 +1,19 @@
 <template>
     <div>
-        <el-form :inline="true" :model="formInline" class="demo-form-inline">
+        <el-form :inline="true" :model="queryForm" class="demo-form-inline">
             <el-form-item>
-                <el-input v-model="formInline.user" placeholder="审批人"></el-input>
+                <el-input v-model="queryForm.code" placeholder="错误码"></el-input>
             </el-form-item><el-form-item>
-                <el-select v-model="formInline.region" placeholder="活动区域">
-                <el-option label="区域一" value="shanghai"></el-option>
-                <el-option label="区域二" value="beijing"></el-option>
+                <el-select v-model="queryForm.system" placeholder="所属系统">
+                  <el-option label="区域一" value="shanghai"></el-option>
+                  <el-option label="区域二" value="beijing"></el-option>
                 </el-select>
-            </el-form-item><el-form-item>
-                <el-button type="primary" @click="onSubmit">查询</el-button>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="handleQuery">查询</el-button>
+            </el-form-item>
+            <el-form-item align="right">
+                <el-button type="primary" @click="handleAdd">新增</el-button>
             </el-form-item>
         </el-form>
         <el-table :data="tableData" style="width: 100%">
@@ -24,7 +28,7 @@
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item><el-button type="primary" icon="information" @click="handleView(row)" >详细</el-button></el-dropdown-item>
-                  <el-dropdown-item><el-button type="primary" icon="edit">编辑</el-button></el-dropdown-item>
+                  <el-dropdown-item><el-button type="primary" icon="edit" @click="handleEdit(row)">编辑</el-button></el-dropdown-item>
                   <el-dropdown-item><el-button type="primary" icon="delete">删除</el-button></el-dropdown-item>
                   <el-dropdown-item><el-button type="primary" icon="more" @click="handleRedirect(row)">更多</el-button></el-dropdown-item>
                 </el-dropdown-menu>
@@ -34,42 +38,56 @@
 
         <!-- 对话框 //-->
         <el-dialog title="详细信息" v-model="ui.dialogVisible">
-          <el-form :model="editForm" label-width="80px" ref="editForm">
+          <el-form :model="editForm" :rules="editFormRules" label-width="80px" ref="editForm">
             <el-form-item label="错误码" prop="code">
-    					<el-input v-model="editForm.code" auto-complete="off" readonly="editForm.ui.dialogReadonly"></el-input>
+    					<el-input v-model="editForm.code" auto-complete="off" v-bind:readonly="ui.dialogReadonly" :autofocus=true></el-input>
 		    		</el-form-item>
             <el-form-item label="错误信息" prop="title">
-              <el-input v-model="editForm.title" aria-autocomplete="off" readonly="editForm.ui.dialogReadonly"></el-input>
+              <el-input v-model="editForm.title" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
             </el-form-item>
             <el-form-item label="详细信息" prop="description">
-              <el-input type="textarea" v-model="editForm.description" aria-autocomplete="off" readonly="editForm.ui.dialogReadonly"></el-input>
+              <el-input type="textarea" v-model="editForm.description" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
             </el-form-item>
             <el-form-item label="解决办法" prop="solution">
-              <el-input type="textarea" v-model="editForm.solution" aria-autocomplete="off" readonly="editForm.ui.dialogReadonly"></el-input>
+              <el-input type="textarea" v-model="editForm.solution" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
             </el-form-item>
           </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click.native="ui.dialogVisible = false">取 消</el-button>
+            <el-button v-if="ui.dialogReadonly==false" type="primary" @click.native="handleSaveOrUpdate()" >确 定</el-button>
+          </div>          
         </el-dialog>
     <div>
 </template>
 <script>
+var co = require('co');
+
 export default {
-  mounted: function () {
-    this.loadAllCodes();
-  },
   data() {
     return {
       ui: {
+        // 对话框是否可见
         dialogVisible: false,
-        dialogReadonly: true
+        // 对话框的内容是否允许编辑
+        dialogReadonly: true,
+        // 是新增记录还是编辑记录
+        addRecord: false,
       },
       editForm: {},
-      formInline: {
-        user: '',
-        region: ''
+      editFormRules: {
+        code: [
+          {required: true, message: '请输入错误码', trigger: 'blur'}
+        ],
       },
+      queryForm: { user: '', region: ''},
       tableData: []
     }
   },
+
+  mounted: function () {
+    this.loadAllCodes();
+  },
+
   methods: {
     loadAllCodes: function() {
       console.log("*************************************");
@@ -84,19 +102,47 @@ export default {
     },
     handleView: function(row) {
       this.ui.dialogVisible = true;
+      this.ui.dialogReadonly = true;
+      this.ui.addRecord = false;
       this.editForm.id = row.id;
       this.editForm.code = row.code;
       this.editForm.title = row.title;
       this.editForm.description = row.description;
       this.editForm.solution = row.solution;
     },
+    handleEdit: function(row) {
+      this.ui.dialogVisible = true;
+      this.ui.dialogReadonly = false;
+      this.ui.addRecord = false;
+      this.editForm.id = row.id;
+      this.editForm.code = row.code;
+      this.editForm.title = row.title;
+      this.editForm.description = row.description;
+      this.editForm.solution = row.solution;
+    },
+    handleAdd: function() {
+      this.ui.dialogVisible = true;
+      this.ui.dialogReadonly = false;
+      this.ui.addRecord = true;
+      this.editForm.id = '';
+      this.editForm.code = '';
+      this.editForm.title = '';
+      this.editForm.description = '';
+      this.editForm.solution = '';
+    },
     handleRedirect: function(row) {
       let code = row.code;
       console.log('#/codes/'+code);
       this.$router.push({path: '/codes/'+code});
     },
-    onSubmit: function() {
-      console.log('submit!');
+    handleSaveOrUpdate: function() {
+      if (this.ui.addRecord)
+        console.log('Add record....');
+      else
+        console.log('Update record...');
+    },
+    handleQuery: function() {
+      console.log('Try to query....');
     }
   }
 }
