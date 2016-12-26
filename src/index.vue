@@ -29,7 +29,7 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item><el-button type="primary" icon="information" @click="handleView(row)" >详细</el-button></el-dropdown-item>
                   <el-dropdown-item><el-button type="primary" icon="edit" @click="handleEdit(row)">编辑</el-button></el-dropdown-item>
-                  <el-dropdown-item><el-button type="primary" icon="delete">删除</el-button></el-dropdown-item>
+                  <el-dropdown-item><el-button type="primary" icon="delete" @click="handleDelete(row)">删除</el-button></el-dropdown-item>
                   <el-dropdown-item><el-button type="primary" icon="more" @click="handleRedirect(row)">更多</el-button></el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>           
@@ -129,6 +129,14 @@ export default {
       this.editForm.title = '';
       this.editForm.description = '';
       this.editForm.solution = '';
+    },
+    handleDelete: function() {
+      this.$confirm('此操作将删除当前记录，是否继续？', '请确认', {confirmButtonText:'确定', cancelButtonText: '取消', type: 'warning'})
+        .then(() => {
+          console.log('trying to delete');
+        }).catch(() => {
+          console.log('Cancel delete...');
+        });
     },
     handleRedirect: function(row) {
       let code = row.code;
