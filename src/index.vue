@@ -38,9 +38,9 @@
 
         <!-- 对话框 //-->
         <el-dialog title="详细信息" v-model="ui.dialogVisible">
-          <el-form :model="editForm" :rules="editFormRules" label-width="80px" ref="editForm">
+          <el-form :model="editForm" :rules="editFormRules" label-width="100px" ref="editForm">
             <el-form-item label="错误码" prop="code">
-    					<el-input v-model="editForm.code" auto-complete="off" v-bind:readonly="ui.dialogReadonly" :autofocus=true></el-input>
+    					<el-input v-model="editForm.code" auto-complete="off" v-bind:readonly="ui.dialogReadonly" ref="codeInput"></el-input>
 		    		</el-form-item>
             <el-form-item label="错误信息" prop="title">
               <el-input v-model="editForm.title" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
@@ -61,7 +61,6 @@
 </template>
 <script>
 var co = require('co');
-
 export default {
   data() {
     return {
@@ -75,9 +74,10 @@ export default {
       },
       editForm: {},
       editFormRules: {
-        code: [
-          {required: true, message: '请输入错误码', trigger: 'blur'}
-        ],
+        code: [{required: true, message: '请输入错误码', trigger: 'blur'}],
+        title: [{required: true, message: '请输入错误信息', trigger: 'blur'}],
+        description: [{required: true, message: '请输入详细信息', trigger: 'blur'}],
+        solution: [{required: true, message: '请输入解决办法', trigger: 'blur'}],
       },
       queryForm: { user: '', region: ''},
       tableData: []
@@ -91,7 +91,7 @@ export default {
   methods: {
     loadAllCodes: function() {
       console.log("*************************************");
-      this.$http.get('/codes/all').then((response) => { // Success
+      this.$http.get('/api/codes/all').then((response) => { // Success
         console.log(response.body);
         if (response.body.success==true) {
           this.tableData = response.body.data;
@@ -111,6 +111,9 @@ export default {
       this.editForm.solution = row.solution;
     },
     handleEdit: function(row) {
+      console.log(this);
+      console.log(this.$refs);
+      // console.log(vm);
       this.ui.dialogVisible = true;
       this.ui.dialogReadonly = false;
       this.ui.addRecord = false;
@@ -119,6 +122,11 @@ export default {
       this.editForm.title = row.title;
       this.editForm.description = row.description;
       this.editForm.solution = row.solution;
+      let _this = this;
+      this.__proto__.$nextTick(() => {
+        console.log(_this.$refs.codeInput);
+        _this.$refs.codeInput.autofocus=true;
+      });
     },
     handleAdd: function() {
       this.ui.dialogVisible = true;
@@ -130,10 +138,17 @@ export default {
       this.editForm.description = '';
       this.editForm.solution = '';
     },
-    handleDelete: function() {
+    handleDelete: function(row) {
       this.$confirm('此操作将删除当前记录，是否继续？', '请确认', {confirmButtonText:'确定', cancelButtonText: '取消', type: 'warning'})
         .then(() => {
           console.log('trying to delete');
+          this.$http.delete('/api/codes/ids/'+row.id)
+            .then(()=>{
+              this.$message({type:'info', message:'删除成功！'});
+              this.loadAllCodes();
+            }, ()=>{
+              this.$message({type:'warning', message:'删除失败！'});
+            });
         }).catch(() => {
           console.log('Cancel delete...');
         });
@@ -144,10 +159,36 @@ export default {
       this.$router.push({path: '/codes/'+code});
     },
     handleSaveOrUpdate: function() {
-      if (this.ui.addRecord)
-        console.log('Add record....');
-      else
-        console.log('Update record...');
+      // 0. 校验数据
+      if (this.$refs.editForm.validate((valid)=>{
+        if (!valid) // 1. 数据不符合校验规则，返回
+          return;
+        // 2. 新增记录
+        if (this.ui.addRecord) {
+          let record = this.editForm;
+          console.log('Add record....', record);
+          this.$http.post('/api/codes', record)
+            .then(()=>{
+              this.$message({type:'info', message:'保存成功！'});
+              this.ui.dialogVisible = false;
+              this.loadAllCodes();
+            }, ()=>{
+              this.$message({type:'warning', message:'保存失败!'});
+            });
+        }
+        else {  // 3. 更新记录
+          console.log('Update record...');
+          let record = this.editForm;
+          this.$http.post('/api/codes/'+record.code, record)
+            .then(()=>{
+              this.$message({type:'info', message:'保存成功！'});
+              this.ui.dialogVisible = false;
+              this.loadAllCodes();
+            }, ()=>{
+              this.$message({type:'warning', message:'保存失败!'});
+            });
+        }
+      }));
     },
     handleQuery: function() {
       console.log('Try to query....');

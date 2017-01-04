@@ -72,7 +72,7 @@
                 console.log(this.$route.params.code);
                 console.log("Hello..........................");
                 
-                this.$http.get('/codes/' + this.$route.params.code).then((response) => {
+                this.$http.get('/api/codes/' + this.$route.params.code).then((response) => {
                     console.log(response.body);
                     if (response.body.success) {    // success callback
                         console.log(response.body.data);

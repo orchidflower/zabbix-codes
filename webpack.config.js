@@ -1,6 +1,6 @@
 module.exports = {
   // 这是一个主文件包括其他模块
-  entry: './src/main.js',
+  entry: ['babel-polyfill', './src/main.js'],
   // 编译的文件路径
   output: {
       //`dist`文件夹
@@ -55,7 +55,7 @@ module.exports = {
     host: '0.0.0.0',
     port: '8080',
     proxy: {
-      '/codes': {
+      '/api/codes': {
         target: 'http://localhost:3000',
         secure: false
       },
