@@ -4,7 +4,7 @@ module.exports = {
   // 编译的文件路径
   output: {
       //`dist`文件夹
-    path: './public/javascripts',
+    path: '../public/javascripts',
     publicPath: "/javascripts/",
     // 文件 `build.js` 即 dist/build.js
     filename: 'build.js'
