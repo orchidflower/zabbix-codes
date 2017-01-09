@@ -1,10 +1,11 @@
 var express = require('express');
+var wrap = require('co-express');
 var router = express.Router();
 var path = require('path');
 var services = require('../services')
 var co = require('co');
 
-router.delete('/ids/:id', (req, res, next) => co(function *() {
+router.delete('/ids/:id', wrap(function *(req, res, next) {
   console.log("the id is", req.params.id);
   var rows = yield services.deleteById(req.params.id);
   var ret = {success: true};
@@ -12,12 +13,12 @@ router.delete('/ids/:id', (req, res, next) => co(function *() {
 }));
 
 /* GET view listing. */
-router.get('/', function (req, res, next) {
+router.get('/', wrap(function *(req, res, next) {
   // res.send('respond with a resource');
   res.sendFile(path.join(__dirname, "../views/index.html"));
-});
+}));
 
-router.get('/all', (req, res, next) => co(function* () {
+router.get('/all', wrap(function *(req, res, next) {
   var rows = yield services.listAllCodes();
   if (rows==null) {
     let ret = {success: false, message: '没有相关记录'};
@@ -29,7 +30,7 @@ router.get('/all', (req, res, next) => co(function* () {
 }));
 
 
-router.get('/:code', (req, res, next) => co(function *() {
+router.get('/:code', wrap(function *(req, res, next) {
   console.log(req.params.code);
   var code = req.params.code;
   var rows = yield services.queryByCode(code);
@@ -42,7 +43,7 @@ router.get('/:code', (req, res, next) => co(function *() {
   res.json(ret);
 }));
 
-router.post('/:code', (req, res, next) => co(function *() {
+router.post('/:code', wrap(function *(req, res, next) {
   console.log(req.params.code);
   let record = req.body;
   var rows = yield services.updateByCode(req.params.code, record);
@@ -50,7 +51,7 @@ router.post('/:code', (req, res, next) => co(function *() {
   res.json(ret);
 }));
 
-router.post('/', (req, res, next) => co(function *() {
+router.post('/', wrap(function *(req, res, next) {
   console.log(req.body);
   var rows = yield services.addCode(req.body);
   var ret = {success: true};
