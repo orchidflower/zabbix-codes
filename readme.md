@@ -29,6 +29,7 @@ pm2-dev ./bin/www
 使用webpack可以启动测试用的前端服务器。可以使用`npm start dev`启动（具体可看`package.json`中的定义）：
 
 ```
+cd web_content
 npm start dev
 ```
 
