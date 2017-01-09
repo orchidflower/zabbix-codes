@@ -154,8 +154,6 @@ router.post('/:code', wrap(function *(req, res, next) {
   res.json(ret);
 }));
 
-
-
 /**
  * @swagger
  * /ids/{id}:
@@ -181,14 +179,5 @@ router.delete('/ids/:id', wrap(function *(req, res, next) {
   var ret = {success: true};
   res.json(ret);
 }));
-
-/* GET view listing. */
-router.get('/', wrap(function *(req, res, next) {
-  // res.send('respond with a resource');
-  res.sendFile(path.join(__dirname, "../views/index.html"));
-}));
-
-
-
 
 module.exports = router;
