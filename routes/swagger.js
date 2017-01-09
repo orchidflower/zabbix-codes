@@ -13,7 +13,7 @@ var options = {
     swagger: "2.0",
     tags: [
         {
-          name: "codes",
+          name: "Codes",
           description: "Codes management related operation"
         }
     ]
