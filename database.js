@@ -20,13 +20,11 @@ init();
 
 var query=function *(sql, callback) {
     var rows = yield pool.queryAsync(sql);
-    console.log("rows: ", rows);
     return rows;
 }
 
 var query=function *(sql, values, callback) {
     var rows = yield pool.queryAsync(sql, values);
-    console.log("rows", rows);
     return rows;
 }
 

@@ -4,6 +4,9 @@ var router = express.Router();
 var path = require('path');
 var services = require('../services')
 var co = require('co');
+var log4js = require('log4js');
+
+let logger = log4js.getLogger('routes.codes');
 
 // Model definition
 /**
@@ -82,7 +85,7 @@ router.get('/all', wrap(function *(req, res, next) {
  *         description: check
  */
 router.get('/:code', wrap(function *(req, res, next) {
-  console.log(req.params.code);
+  logger.debug(req.params.code);
   var code = req.params.code;
   var rows = yield services.queryByCode(code);
   if (rows==null) {
@@ -115,7 +118,7 @@ router.get('/:code', wrap(function *(req, res, next) {
  *         description: check
  */
 router.post('/', wrap(function *(req, res, next) {
-  console.log(req.body);
+  logger.debug(req.body);
   var rows = yield services.addCode(req.body);
   var ret = {success: true};
   res.json(ret);
@@ -147,7 +150,7 @@ router.post('/', wrap(function *(req, res, next) {
  *         description: check
  */
 router.post('/:code', wrap(function *(req, res, next) {
-  console.log(req.params.code);
+  logger.debug(req.params.code);
   let record = req.body;
   var rows = yield services.updateByCode(req.params.code, record);
   var ret = {success:true};
@@ -174,7 +177,7 @@ router.post('/:code', wrap(function *(req, res, next) {
  *         description: check
  */
 router.delete('/ids/:id', wrap(function *(req, res, next) {
-  console.log("the id is", req.params.id);
+  logger.debug("the id is", req.params.id);
   var rows = yield services.deleteById(req.params.id);
   var ret = {success: true};
   res.json(ret);
