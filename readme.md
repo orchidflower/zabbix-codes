@@ -26,9 +26,10 @@ pm2-dev ./bin/www
 ```
 
 ## 3.2 启动前端
-使用webpack可以启动测试用的前端服务器。可以使用`npm start dev`启动（具体可看`package.json`中的定义）：
+前端项目在`zabbix_codes/web_content`目录下。使用webpack可以启动测试用的前端服务器。可以使用`npm start dev`启动（具体可看`package.json`中的定义）：
 
 ```
+cd zabbix_codes/web_content
 npm start dev
 ```
 

@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "dev": "webpack-dev-server --content-base=./views --inline --hot"
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "bluebird": "^3.4.7",
