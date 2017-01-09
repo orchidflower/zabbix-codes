@@ -1,2 +1,4 @@
 node_modules
 web_content/node_modules
+public/javascripts
+*.log
