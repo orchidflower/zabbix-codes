@@ -1,4 +1,4 @@
-FROM docker-registry.xwf-id.com/repository/pm2:6.9
+FROM docker-registry.xwf-id.com/pm2-gui:6.9
 ENV WWW_HOME /public
 EXPOSE 3000 8088
 ADD . ${WWW_HOME}
