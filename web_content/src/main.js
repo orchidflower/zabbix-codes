@@ -25,6 +25,7 @@ const router = new VueRouter({
       component: App,   // App View
       // components: {AppHeader: AppHeader, AppFooter: AppFooter},
       children: [
+        {path: '', component: Index},
         {path: '/index', component: Index},
         {path: '/codes/:code', component: Codes}
       ]
