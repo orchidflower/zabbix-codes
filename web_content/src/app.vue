@@ -1,7 +1,6 @@
 <template> 
     <div>
-			<app-header></app-header>
-			<!--<router-view name="header"></router-view>-->
+			<!--<app-header/>-->
 			<el-row type="flex" justify="center">
 				<el-col :span=18>
 					<transition name="bounce">
@@ -9,14 +8,13 @@
 					</transition>
 				</el-col>
 			</el-row>
-			<app-footer></app-footer>
-			<!--<router-view name="footer"></router-view>-->
+			<!--<app-footer/>-->
 	</div>
 </template>
 <script>
 export default {
-  name: 'app',
-  components: {
-  }
+//   name: 'app',
+//   components: {
+//   }
 }
 </script>

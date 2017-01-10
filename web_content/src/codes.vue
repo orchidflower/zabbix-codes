@@ -46,8 +46,6 @@
 </template>
 
 <script>
-    import AppHeader from './header.vue';
-    import AppFooter from './footer.vue';
     export default {
         mounted : function () {
             this.getCodeDetails();
@@ -66,7 +64,6 @@
                 }
             }
         },
-        components: {AppHeader, AppFooter},        
         methods: {
             getCodeDetails :function() {
                 console.log(this.$route.params.code);
