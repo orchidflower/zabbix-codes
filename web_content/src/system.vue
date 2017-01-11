@@ -18,7 +18,8 @@
         </el-form>
 
         <el-table :data="tableData" style="width: 100%" v-loading.body="loading">
-            <el-table-column prop="system" label="系统" width="90"></el-table-column>
+            <el-table-column prop="system" label="系统编码" width="100"></el-table-column>
+            <el-table-column prop="name" label="系统名称" width="100"></el-table-column>
             <el-table-column prop="contact" label="联系人" width="250"></el-table-column>
             <el-table-column prop="description" label="系统介绍"></el-table-column>
             <el-table-column label="操作" inline-template :context="_self" fixed="right" width="150">
@@ -39,10 +40,20 @@
         <el-dialog title="详细信息" v-model="ui.dialogVisible">
           <el-form :model="editForm" :rules="editFormRules" label-width="100px" ref="editForm">
             <el-form-item label="系统代码" prop="system">
-    					<el-input v-model="editForm.system" auto-complete="off" v-bind:readonly="ui.dialogReadonly" ref="codeInput"></el-input>
-		    		</el-form-item>
+    			<el-input v-model="editForm.system" auto-complete="off" v-bind:readonly="ui.dialogReadonly" ref="codeInput"></el-input>
+		    </el-form-item>
+            <el-form-item label="系统名称" prop="name">
+    			<el-input v-model="editForm.name" auto-complete="off" v-bind:readonly="ui.dialogReadonly" ref="codeInput"></el-input>
+		    </el-form-item>
             <el-form-item label="联系人" prop="contact">
-              <el-input v-model="editForm.contact" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
+              <!--<el-input v-model="editForm.contact" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>-->
+                <el-select v-model="editForm.contact" placeholder="请选择联系人">
+                    <el-option
+                    v-for="item in allContacts"
+                    :label="item.label"
+                    :value="item.value">
+                    </el-option>
+                </el-select>                              
             </el-form-item>
             <el-form-item label="详细信息" prop="description">
               <el-input type="textarea" v-model="editForm.description" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
@@ -59,6 +70,7 @@
 export default {
   data() {
     return {
+      allContacts: [],
       ui: {
         // 对话框是否可见
         dialogVisible: false,
@@ -67,7 +79,7 @@ export default {
         // 是新增记录还是编辑记录
         addRecord: false,
       },
-      editForm: {},
+      editForm: {contact:''},
       editFormRules: {
         code: [{required: true, message: '请输入错误码', trigger: 'blur'}],
         title: [{required: true, message: '请输入错误信息', trigger: 'blur'}],
@@ -81,8 +93,25 @@ export default {
   },
   mounted: function () {
     this.loadAllSystems();
+    this.loadAllContacts();
   },
   methods: {
+    loadAllContacts: function() {
+      this.$http.get('/api/contacts/all').then((response) => { // Success
+        // console.log(response.body);
+        if (response.body.success==true) {
+          let data = response.body.data;
+          console.log(data);
+          this.allContacts = [];
+          let _this = this;
+          data.forEach(function(item){
+              console.log(item.contact);
+              _this.allContacts.push({label: item.contact, value: item.contact});
+          });
+        }
+      }, (response) => { // Failure
+      })
+    },
     loadAllSystems: function() {
       console.log("*************************************");
       this.loading = true;
@@ -96,6 +125,7 @@ export default {
       })
     },    
     handleAdd: function() {
+    //   this.loadAllContacts();
       this.ui.dialogVisible = true;
       this.ui.dialogReadonly = false;
       this.ui.addRecord = true;

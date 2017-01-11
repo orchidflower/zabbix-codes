@@ -25,7 +25,7 @@ exports.addCode = function *(record) {
     logger.debug('.....................add Code...........................');
     logger.debug(record);
     var sql = 'insert into ZABBIX_CODES (code, system, title, level, description, solution, contact) values (?, ?, ?, ?, ?, ?, ?)';
-    var values = [record.code, 'SYS', record.title, 0, record.description, record.solution, 'jie.li@xwf-id.com'];
+    var values = [record.code, record.system, record.title, 0, record.description, record.solution, 'jie.li@xwf-id.com'];
     var rows = yield db.query(sql, values);
     logger.debug(rows);
     return rows;
@@ -34,8 +34,8 @@ exports.addCode = function *(record) {
 exports.updateByCode = function *(code, record) {
     logger.debug('......................update by Code ' + code + '......................' );
     logger.debug(record);
-    var sql='update ZABBIX_CODES set title=?, description=?, solution=? where code=?';
-    var values = [record.title, record.description, record.solution, record.code];
+    var sql='update ZABBIX_CODES set title=?, system=?, description=?, solution=? where code=?';
+    var values = [record.title, record.system, record.description, record.solution, record.code];
     var rows = yield db.query(sql, values);
     logger.debug(rows);
     return rows;
@@ -102,14 +102,14 @@ exports.deleteContactById = function *(id) {
 ////////////////////// System /////////////////////////////////
 exports.listAllSystems = function *() {
     logger.debug("...................list all system.................");
-    var sql = 'select id, system, description, contact from ZABBIX_SYSTEMS';
+    var sql = 'select id, system, name, description, contact from ZABBIX_SYSTEMS';
     var rows = yield db.query(sql);
     return rows;
 }
 
 exports.queryBySystem = function *(system) {
     logger.debug('....................system = ' + system + '.................');
-    var sql = 'select id, system, description, contact from ZABBIX_CONTACTS where system = ?';
+    var sql = 'select id, system, name, description, contact from ZABBIX_CONTACTS where system = ?';
     var values = [system];
     var rows = yield db.query(sql, values);
     if (rows.length>=1)
@@ -120,8 +120,8 @@ exports.queryBySystem = function *(system) {
 exports.addSystem = function *(record) {
     logger.debug('.....................add System...........................');
     logger.debug(record);
-    var sql = 'insert into ZABBIX_SYSTEMS (system, description, contact) values (?, ?, ?)';
-    var values = [record.system, record.description, record.contact];
+    var sql = 'insert into ZABBIX_SYSTEMS (system, name, description, contact) values (?, ?, ?, ?)';
+    var values = [record.system, record.name, record.description, record.contact];
     var rows = yield db.query(sql, values);
     logger.debug(rows);
     return rows;
@@ -130,8 +130,8 @@ exports.addSystem = function *(record) {
 exports.updateBySystem = function *(system, record) {
     logger.debug('......................update by System ' + system + '......................' );
     logger.debug(record);
-    var sql='update ZABBIX_SYSTEMS set system=?, description=?, contact=? where system=?';
-    var values = [record.system, record.description, record.contact, system];
+    var sql='update ZABBIX_SYSTEMS set system=?, name=?, description=?, contact=? where system=?';
+    var values = [record.system, record.name, record.description, record.contact, system];
     var rows = yield db.query(sql, values);
     logger.debug(rows);
     return rows;

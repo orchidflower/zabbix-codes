@@ -45,6 +45,15 @@
             <el-form-item label="错误码" prop="code">
     					<el-input v-model="editForm.code" auto-complete="off" v-bind:readonly="ui.dialogReadonly" ref="codeInput"></el-input>
 		    		</el-form-item>
+            <el-form-item label="所属系统" prop="system">
+                <el-select v-model="editForm.system" placeholder="请选择系统">
+                    <el-option
+                    v-for="item in allSystems"
+                    :label="item.label"
+                    :value="item.value">
+                    </el-option>
+                </el-select>              
+            </el-form-item>
             <el-form-item label="错误信息" prop="title">
               <el-input v-model="editForm.title" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
             </el-form-item>
@@ -66,6 +75,7 @@
 export default {
   data() {
     return {
+      allSystems: [],
       ui: {
         // 对话框是否可见
         dialogVisible: false,
@@ -74,7 +84,7 @@ export default {
         // 是新增记录还是编辑记录
         addRecord: false,
       },
-      editForm: {},
+      editForm: {system:''},
       editFormRules: {
         code: [{required: true, message: '请输入错误码', trigger: 'blur'}],
         title: [{required: true, message: '请输入错误信息', trigger: 'blur'}],
@@ -89,9 +99,28 @@ export default {
 
   mounted: function () {
     this.loadAllCodes();
+    this.loadAllSystems();
   },
 
   methods: {
+    loadAllSystems: function () {
+      this.loading = true;
+      console.log("*************************************");
+      this.$http.get('/api/systems/all').then((response) => { // Success
+        console.log(response.body);
+        if (response.body.success==true) {
+          let data = response.body.data;
+          let _this = this;
+          this.allSystems = [];
+          data.forEach(function(item){
+            _this.allSystems.push({label: item.name, value: item.system})
+          });
+        }
+        this.loading = false;
+      }, (response) => { // Failure
+
+      })
+    },
     loadAllCodes: function() {
       this.loading = true;
       console.log("*************************************");
@@ -111,6 +140,7 @@ export default {
       this.ui.addRecord = false;
       this.editForm.id = row.id;
       this.editForm.code = row.code;
+      this.editForm.system = row.system;
       this.editForm.title = row.title;
       this.editForm.description = row.description;
       this.editForm.solution = row.solution;
@@ -124,6 +154,7 @@ export default {
       this.ui.addRecord = false;
       this.editForm.id = row.id;
       this.editForm.code = row.code;
+      this.editForm.system = row.system;
       this.editForm.title = row.title;
       this.editForm.description = row.description;
       this.editForm.solution = row.solution;
@@ -139,6 +170,7 @@ export default {
       this.ui.addRecord = true;
       this.editForm.id = '';
       this.editForm.code = '';
+      this.editForm.system = '';
       this.editForm.title = '';
       this.editForm.description = '';
       this.editForm.solution = '';

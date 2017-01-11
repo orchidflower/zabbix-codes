@@ -15,10 +15,13 @@ let logger = log4js.getLogger('routes.systems');
  *     type: object
  *     required:
  *       - system
+ *       - name
  *       - contact
  *       - description
  *     properties:
  *       system:
+ *         type: string
+ *       name:
  *         type: string
  *       contact:
  *         type: string
