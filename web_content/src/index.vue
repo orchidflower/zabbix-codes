@@ -8,8 +8,11 @@
                 <el-input v-model="queryForm.code" placeholder="错误码"></el-input>
             </el-form-item><el-form-item>
                 <el-select v-model="queryForm.system" placeholder="所属系统">
-                  <el-option label="区域一" value="shanghai"></el-option>
-                  <el-option label="区域二" value="beijing"></el-option>
+                    <el-option
+                    v-for="item in allSystems"
+                    :label="item.label"
+                    :value="item.value">
+                    </el-option>
                 </el-select>
             </el-form-item>
             <el-form-item>
@@ -91,7 +94,7 @@ export default {
         description: [{required: true, message: '请输入详细信息', trigger: 'blur'}],
         solution: [{required: true, message: '请输入解决办法', trigger: 'blur'}],
       },
-      queryForm: { user: '', region: ''},
+      queryForm: { code: '', system:''},
       tableData: [],
       loading: false
     }
