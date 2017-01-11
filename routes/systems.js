@@ -105,7 +105,7 @@ router.get('/:system', wrap(function *(req, res, next) {
  */
 router.post('/', wrap(function *(req, res, next) {
   logger.debug(req.body);
-  var rows = yield services.addCode(req.body);
+  var rows = yield services.addSystem(req.body);
   var ret = {success: true};
   res.json(ret);
 }));
@@ -164,7 +164,7 @@ router.post('/:system', wrap(function *(req, res, next) {
  */
 router.delete('/ids/:id', wrap(function *(req, res, next) {
   logger.debug("the id is", req.params.id);
-  var rows = yield services.deleteById(req.params.id);
+  var rows = yield services.deleteSystemById(req.params.id);
   var ret = {success: true};
   res.json(ret);
 }));

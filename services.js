@@ -79,11 +79,11 @@ exports.addContact = function *(record) {
     return rows;
 }
 
-exports.updateByContact = function *(contact, record) {
+exports.updateContactByContact = function *(contact, record) {
     logger.debug('......................update by Contact ' + contact + '......................' );
     logger.debug(record);
-    var sql='update ZABBIX_CONTACTS set contact=?, name=?, title=?, qq=?, weixin=?, mobile=? where contact=?';
-    var values = [record.contact, record.name, record.title, record.qq, record.weixin, record.mobile];
+    var sql='update ZABBIX_CONTACTS set name=?, title=?, qq=?, weixin=?, mobile=? where contact=?';
+    var values = [record.name, record.title, record.qq, record.weixin, record.mobile, contact];
     var rows = yield db.query(sql, values);
     logger.debug(rows);
     return rows;

@@ -36,6 +36,33 @@
               </el-dropdown>           
             </el-table-column>
         </el-table>
+        <!-- 对话框 //-->
+        <el-dialog title="详细信息" v-model="ui.dialogVisible">
+          <el-form :model="editForm" :rules="editFormRules" label-width="100px" ref="editForm">
+            <el-form-item label="邮箱" prop="contact">
+                <el-input v-model="editForm.contact" auto-complete="off" v-bind:readonly="ui.dialogReadonly" ref="codeInput"></el-input>
+            </el-form-item>
+            <el-form-item label="姓名" prop="name">
+              <el-input v-model="editForm.name" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
+            </el-form-item>
+            <el-form-item label="职位" prop="title">
+              <el-input v-model="editForm.title" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
+            </el-form-item>
+            <el-form-item label="手机号" prop="mobile">
+              <el-input v-model="editForm.mobile" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
+            </el-form-item>
+            <el-form-item label="QQ" prop="qq">
+                <el-input v-model="editForm.qq" auto-complete="off" v-bind:readonly="ui.dialogReadonly" ref="codeInput"></el-input>
+            </el-form-item>
+            <el-form-item label="微信" prop="weixin">
+                <el-input v-model="editForm.weixin" auto-complete="off" v-bind:readonly="ui.dialogReadonly" ref="codeInput"></el-input>
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click.native="ui.dialogVisible = false">取 消</el-button>
+            <el-button v-if="ui.dialogReadonly==false" type="primary" @click.native="handleSaveOrUpdate()" >确 定</el-button>
+          </div>          
+        </el-dialog>        
     </div>
 </template>
 <script>
@@ -52,7 +79,8 @@ export default {
       },
       editForm: {},
       editFormRules: {
-        code: [{required: true, message: '请输入错误码', trigger: 'blur'}],
+        contact: [{required: true, message: '请输入邮箱', trigger: 'blur'}],
+        name: [{required: true, message: '请输入姓名', trigger: 'blur'}],
         title: [{required: true, message: '请输入错误信息', trigger: 'blur'}],
         description: [{required: true, message: '请输入详细信息', trigger: 'blur'}],
         solution: [{required: true, message: '请输入解决办法', trigger: 'blur'}],
@@ -80,10 +108,30 @@ export default {
       })
     },      
     handleAdd: function() {
+      this.ui.dialogVisible = true;
+      this.ui.dialogReadonly = false;
+      this.ui.addRecord = true;
+      this.editForm.id = '';
+      this.editForm.contact = '';
+      this.editForm.name = '';
+      this.editForm.title = '';
+      this.editForm.mobile = '';
+      this.editForm.qq = '';
+      this.editForm.weixin = '';        
     },
     handleQuery: function() {
     },
     handleView: function(row) {
+      this.ui.dialogVisible = true;
+      this.ui.dialogReadonly = true;
+      this.ui.addRecord = false;
+      this.editForm.id = row.id;
+      this.editForm.contact = row.contact;
+      this.editForm.name = row.name;
+      this.editForm.title = row.title;
+      this.editForm.mobile = row.mobile;
+      this.editForm.qq = row.qq;
+      this.editForm.weixin = row.weixin;
     },
     handleDelete: function(row) {
 
@@ -92,8 +140,49 @@ export default {
 
     },
     handleEdit: function(row) {
-        
-    }
+      this.ui.dialogVisible = true;
+      this.ui.dialogReadonly = false;
+      this.ui.addRecord = false;
+      this.editForm.id = row.id;
+      this.editForm.contact = row.contact;
+      this.editForm.name = row.name;
+      this.editForm.title = row.title;
+      this.editForm.mobile = row.mobile;
+      this.editForm.qq = row.qq;
+      this.editForm.weixin = row.weixin;
+    },
+    handleSaveOrUpdate: function() {
+      // 0. 校验数据
+      if (this.$refs.editForm.validate((valid)=>{
+        if (!valid) // 1. 数据不符合校验规则，返回
+          return;
+        // 2. 新增记录
+        if (this.ui.addRecord) {
+          let record = this.editForm;
+          console.log('Add record....', record);
+          this.$http.post('/api/contacts', record)
+            .then(()=>{
+              this.$message({type:'info', message:'保存成功！'});
+              this.ui.dialogVisible = false;
+              this.loadAllContacts();
+            }, ()=>{
+              this.$message({type:'warning', message:'保存失败!'});
+            });
+        }
+        else {  // 3. 更新记录
+          console.log('Update record...');
+          let record = this.editForm;
+          this.$http.post('/api/contacts/'+record.contact, record)
+            .then(()=>{
+              this.$message({type:'info', message:'保存成功！'});
+              this.ui.dialogVisible = false;
+              this.loadAllContacts();
+            }, ()=>{
+              this.$message({type:'warning', message:'保存失败!'});
+            });
+        }
+      }));
+    }    
   }
 }
 </script>

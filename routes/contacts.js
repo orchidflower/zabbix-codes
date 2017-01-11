@@ -147,7 +147,7 @@ router.post('/', wrap(function *(req, res, next) {
 router.post('/:contact', wrap(function *(req, res, next) {
   logger.debug(req.params.contact);
   let record = req.body;
-  var rows = yield services.updateContactByCode(req.params.contact, record);
+  var rows = yield services.updateContactByContact(req.params.contact, record);
   var ret = {success:true};
   res.json(ret);
 }));

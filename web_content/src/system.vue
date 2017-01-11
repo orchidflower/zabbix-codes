@@ -34,7 +34,26 @@
                 </el-dropdown-menu>
               </el-dropdown>           
             </el-table-column>
-        </el-table>        
+        </el-table>   
+
+        <!-- 对话框 //-->
+        <el-dialog title="详细信息" v-model="ui.dialogVisible">
+          <el-form :model="editForm" :rules="editFormRules" label-width="100px" ref="editForm">
+            <el-form-item label="系统代码" prop="system">
+    					<el-input v-model="editForm.system" auto-complete="off" v-bind:readonly="ui.dialogReadonly" ref="codeInput"></el-input>
+		    		</el-form-item>
+            <el-form-item label="联系人" prop="contact">
+              <el-input v-model="editForm.contact" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
+            </el-form-item>
+            <el-form-item label="详细信息" prop="description">
+              <el-input type="textarea" v-model="editForm.description" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click.native="ui.dialogVisible = false">取 消</el-button>
+            <el-button v-if="ui.dialogReadonly==false" type="primary" @click.native="handleSaveOrUpdate()" >确 定</el-button>
+          </div>          
+        </el-dialog>             
     </div>
 </template>
 <script>
@@ -78,10 +97,25 @@ export default {
       })
     },    
     handleAdd: function() {
+      this.ui.dialogVisible = true;
+      this.ui.dialogReadonly = false;
+      this.ui.addRecord = true;
+      this.editForm.id = '';
+      this.editForm.system = '';
+      this.editForm.contact = '';
+      this.editForm.description = '';
     },
     handleQuery: function() {
+        
     },
     handleView: function(row) {
+      this.ui.dialogVisible = true;
+      this.ui.dialogReadonly = true;
+      this.ui.addRecord = false;
+      this.editForm.id = row.id;
+      this.editForm.system = row.system;
+      this.editForm.contact = row.contact;
+      this.editForm.description = row.description;
     },
     handleDelete: function(row) {
 
@@ -91,7 +125,39 @@ export default {
     },
     handleEdit: function(row) {
 
-    }
+    },
+    handleSaveOrUpdate: function() {
+      // 0. 校验数据
+      if (this.$refs.editForm.validate((valid)=>{
+        if (!valid) // 1. 数据不符合校验规则，返回
+          return;
+        // 2. 新增记录
+        if (this.ui.addRecord) {
+          let record = this.editForm;
+          console.log('Add record....', record);
+          this.$http.post('/api/systems', record)
+            .then(()=>{
+              this.$message({type:'info', message:'保存成功！'});
+              this.ui.dialogVisible = false;
+              this.loadAllSystems();
+            }, ()=>{
+              this.$message({type:'warning', message:'保存失败!'});
+            });
+        }
+        else {  // 3. 更新记录
+          console.log('Update record...');
+          let record = this.editForm;
+          this.$http.post('/api/systems/'+record.system, record)
+            .then(()=>{
+              this.$message({type:'info', message:'保存成功！'});
+              this.ui.dialogVisible = false;
+              this.loadAllSystems();
+            }, ()=>{
+              this.$message({type:'warning', message:'保存失败!'});
+            });
+        }
+      }));
+    }    
   }
 }
 </script>
