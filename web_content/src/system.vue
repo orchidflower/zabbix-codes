@@ -30,7 +30,6 @@
                   <el-dropdown-item><el-button type="primary" icon="information" @click="handleView(row)" >详细</el-button></el-dropdown-item>
                   <el-dropdown-item><el-button type="primary" icon="edit" @click="handleEdit(row)">编辑</el-button></el-dropdown-item>
                   <el-dropdown-item><el-button type="primary" icon="delete" @click="handleDelete(row)">删除</el-button></el-dropdown-item>
-                  <el-dropdown-item><el-button type="primary" icon="more" @click="handleRedirect(row)">更多</el-button></el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>           
             </el-table-column>
@@ -118,13 +117,28 @@ export default {
       this.editForm.description = row.description;
     },
     handleDelete: function(row) {
-
-    },
-    handleRedirect: function(row) {
-
+      this.$confirm('此操作将删除当前记录，是否继续？', '请确认', {confirmButtonText:'确定', cancelButtonText: '取消', type: 'warning'})
+        .then(() => {
+          console.log('trying to delete');
+          this.$http.delete('/api/systems/ids/'+row.id)
+            .then(()=>{
+              this.$message({type:'info', message:'删除成功！'});
+              this.loadAllSystems();
+            }, ()=>{
+              this.$message({type:'warning', message:'删除失败！'});
+            });
+        }).catch(() => {
+          console.log('Cancel delete...');
+        });
     },
     handleEdit: function(row) {
-
+      this.ui.dialogVisible = true;
+      this.ui.dialogReadonly = false;
+      this.ui.addRecord = false;
+      this.editForm.id = row.id;
+      this.editForm.system = row.system;
+      this.editForm.contact = row.contact;
+      this.editForm.description = row.description;
     },
     handleSaveOrUpdate: function() {
       // 0. 校验数据
