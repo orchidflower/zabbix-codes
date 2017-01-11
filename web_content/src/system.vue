@@ -177,6 +177,7 @@ export default {
       this.ui.addRecord = false;
       this.editForm.id = row.id;
       this.editForm.system = row.system;
+      this.editForm.name = row.name;
       this.editForm.contact = row.contact;
       this.editForm.description = row.description;
     },

@@ -54,7 +54,7 @@ exports.deleteById = function *(id) {
 ////////////////////// Contact //////////////////////////////////
 exports.listAllContacts = function *() {
     logger.debug("...................list all contacts.................");
-    var sql = 'select id, contact, name, title, qq, weixin, mobile from ZABBIX_CONTACTS';
+    var sql = 'select a.id as id, contact, a.name as name, a.title as title, b.name as titlename, qq, weixin, mobile from ZABBIX_CONTACTS as a, ZABBIX_TITLES as b where a.TITLE=b.TITLE';
     var rows = yield db.query(sql);
     return rows;
 }
@@ -143,5 +143,13 @@ exports.deleteSystemById = function *(id) {
     var values = [id];
     var rows = yield db.query(sql, values);
     logger.debug(rows);
+    return rows;
+}
+
+/////////////////////////// Titles //////////////////////////////////
+exports.listAllTitles = function *() {
+    logger.debug("...................list all titles.................");
+    var sql = 'select id, title, name from ZABBIX_TITLES';
+    var rows = yield db.query(sql);
     return rows;
 }

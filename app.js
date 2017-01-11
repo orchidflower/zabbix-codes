@@ -11,6 +11,7 @@ var codes = require('./routes/codes');
 var systems = require('./routes/systems');
 var contacts = require('./routes/contacts');
 var swagger = require('./routes/swagger');
+var support = require('./routes/support');
 var log4js = require('log4js');
 var app = express();
 
@@ -41,6 +42,7 @@ app.use('/users', users);
 app.use('/api/codes', codes);
 app.use('/api/systems', systems);
 app.use('/api/contacts', contacts);
+app.use('/api/support', support);
 app.use('/swagger', swagger);
 
 // catch 404 and forward to error handler

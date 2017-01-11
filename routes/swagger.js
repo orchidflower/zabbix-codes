@@ -23,7 +23,11 @@ var options = {
         {
           name: "Systems",
           description: "Systems management related operation"
-        }                
+        },
+        {
+          name: "Support",
+          description: "Some support APIs"
+        }
     ]
   },
   apis: ['./routes/*.js'], // Path to the API docs

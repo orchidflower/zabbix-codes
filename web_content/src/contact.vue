@@ -18,7 +18,7 @@
         <el-table :data="filteredTableData" style="width: 100%" v-loading.body="loading">
             <el-table-column prop="name" label="联系人" width="90"></el-table-column>
             <el-table-column prop="contact" label="邮箱" width="250"></el-table-column>
-            <el-table-column prop="title" label="职位"></el-table-column>
+            <el-table-column prop="titlename" label="职位"></el-table-column>
             <el-table-column prop="mobile" label="手机号"></el-table-column>
             <el-table-column prop="qq" label="QQ"></el-table-column>
             <el-table-column prop="weixin" label="微信"></el-table-column>
@@ -74,15 +74,7 @@
 export default {
   data() {
     return {
-      allTitles: [
-          {value:'运维工程师', label:'运维工程师'},
-          {value:'研发工程师', label:'研发工程师'},
-          {value:'Android工程师', label:'Android工程师'},
-          {value:'iOS工程师',label:'iOS工程师'},
-          {value:'测试工程师', label:'测试工程师'},
-          {value:'运营人员', label:'运营人员'},
-          {value:'系统架构师', label:'系统架构师'}
-      ],
+      allTitles: [],
       ui: {
         // 对话框是否可见
         dialogVisible: false,
@@ -116,6 +108,7 @@ export default {
   },
   mounted: function () {
     this.loadAllContacts();
+    this.loadAllTitles();
   },  
   methods: {
     loadAllContacts: function() {
@@ -130,7 +123,24 @@ export default {
       }, (response) => { // Failure
 
       })
-    },      
+    },
+    loadAllTitles: function() {
+      this.loading = true;
+      console.log("*************************************");
+      this.$http.get('/api/support/titles').then((response) => { // Success
+        console.log(response.body);
+        if (response.body.success==true) {
+          let allTitles = response.body.data;
+          let self = this;
+          allTitles.forEach(function(item) {
+            self.allTitles.push({label: item.name, value: item.title});
+          });
+        }
+        this.loading = false;
+      }, (response) => { // Failure
+
+      })
+    },       
     handleAdd: function() {
       this.ui.dialogVisible = true;
       this.ui.dialogReadonly = false;
