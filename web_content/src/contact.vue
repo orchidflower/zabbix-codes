@@ -6,7 +6,7 @@
         </el-breadcrumb>
         <el-form :inline="true" :model="queryForm" class="demo-form-inline">
             <el-form-item>
-                <el-input v-model="queryForm.code" placeholder="联系人"></el-input>
+                <el-input v-model="queryForm.contact" placeholder="联系人"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="handleQuery">查询</el-button>
@@ -15,7 +15,7 @@
                 <el-button type="primary" @click="handleAdd">新增</el-button>
             </el-form-item>
         </el-form>        
-        <el-table :data="tableData" style="width: 100%" v-loading.body="loading">
+        <el-table :data="filteredTableData" style="width: 100%" v-loading.body="loading">
             <el-table-column prop="name" label="联系人" width="90"></el-table-column>
             <el-table-column prop="contact" label="邮箱" width="250"></el-table-column>
             <el-table-column prop="title" label="职位"></el-table-column>
@@ -77,6 +77,9 @@ export default {
       allTitles: [
           {value:'运维工程师', label:'运维工程师'},
           {value:'研发工程师', label:'研发工程师'},
+          {value:'Android工程师', label:'Android工程师'},
+          {value:'iOS工程师',label:'iOS工程师'},
+          {value:'测试工程师', label:'测试工程师'},
           {value:'运营人员', label:'运营人员'},
           {value:'系统架构师', label:'系统架构师'}
       ],
@@ -96,9 +99,19 @@ export default {
         description: [{required: true, message: '请输入详细信息', trigger: 'blur'}],
         solution: [{required: true, message: '请输入解决办法', trigger: 'blur'}],
       },
-      queryForm: { user: '', region: ''},
+      queryForm: { contact: ''},
       tableData: [],
       loading: false
+    }
+  },
+  computed: {
+    filteredTableData: function() {
+      let self = this;
+      let contact = this.queryForm.contact;
+      if (contact=='') return self.tableData;
+      return self.tableData.filter(function(item){
+        return item.contact.indexOf(contact)!=-1;
+      });
     }
   },
   mounted: function () {

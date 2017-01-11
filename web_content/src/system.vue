@@ -7,7 +7,7 @@
 
         <el-form :inline="true" :model="queryForm" class="demo-form-inline">
             <el-form-item>
-                <el-input v-model="queryForm.code" placeholder="系统"></el-input>
+                <el-input v-model="queryForm.system" placeholder="系统"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="handleQuery">查询</el-button>
@@ -17,9 +17,9 @@
             </el-form-item>
         </el-form>
 
-        <el-table :data="tableData" style="width: 100%" v-loading.body="loading">
-            <el-table-column prop="system" label="系统编码" width="100"></el-table-column>
-            <el-table-column prop="name" label="系统名称" width="100"></el-table-column>
+        <el-table :data="filteredTableData" style="width: 100%" v-loading.body="loading">
+            <el-table-column prop="system" label="编码" width="80"></el-table-column>
+            <el-table-column prop="name" label="系统名称" width="180"></el-table-column>
             <el-table-column prop="contact" label="联系人" width="250"></el-table-column>
             <el-table-column prop="description" label="系统介绍"></el-table-column>
             <el-table-column label="操作" inline-template :context="_self" fixed="right" width="150">
@@ -86,9 +86,19 @@ export default {
         description: [{required: true, message: '请输入详细信息', trigger: 'blur'}],
         solution: [{required: true, message: '请输入解决办法', trigger: 'blur'}],
       },
-      queryForm: { user: '', region: ''},
+      queryForm: { system: ''},
       tableData: [],
       loading: false
+    }
+  },
+  computed: {
+    filteredTableData: function() {
+      let self = this;
+      let system = this.queryForm.system;
+      if (system=='') return self.tableData;
+      return self.tableData.filter(function(item){
+        return item.system.indexOf(system)!=-1;
+      });
     }
   },
   mounted: function () {
