@@ -1,5 +1,8 @@
 <template>
     <div>
+        <el-breadcrumb separator="/" class="appnav">
+            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+        </el-breadcrumb>      
         <el-form :inline="true" :model="queryForm" class="demo-form-inline">
             <el-form-item>
                 <el-input v-model="queryForm.code" placeholder="错误码"></el-input>

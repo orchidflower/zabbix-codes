@@ -2,7 +2,7 @@
     <div>
         <!--<el-row type="flex" justify="center">
             <el-col :span=12>-->
-                <el-breadcrumb separator="/">
+                <el-breadcrumb separator="/" class="appnav">
                     <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
                     <el-breadcrumb-item>错误码信息</el-breadcrumb-item>
                 </el-breadcrumb>

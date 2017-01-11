@@ -4,11 +4,13 @@ import VueRouter from 'vue-router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 
-import Codes from './codes.vue'
-import App from './app.vue'
 import AppHeader from './header.vue'
 import AppFooter from './footer.vue'
 import Index from './index.vue'
+import Codes from './codes.vue'
+import App from './app.vue'
+import System from './system.vue'
+import Contact from './contact.vue'
 
 Vue.use(ElementUI)
 Vue.use(VueRouter)
@@ -27,7 +29,9 @@ const router = new VueRouter({
       children: [
         {path: '', component: Index},
         {path: '/index', component: Index},
-        {path: '/codes/:code', component: Codes}
+        {path: '/codes/:code', component: Codes},
+        {path: '/system', component: System},
+        {path: '/contact', component: Contact}
       ]
     }
   ]
@@ -37,11 +41,6 @@ const router = new VueRouter({
 var template = `
   <div id="app">
     <app-header/>
-    <p>
-      <router-link to="/index">Index</router-link>
-      <router-link to="/codes/SYS101">Codes SYS101</router-link>
-      <router-link to="/codes/SYS102">Codes SYS102</router-link>
-    </p>
     <router-view></router-view>
     <app-footer/>
   </div>`;
