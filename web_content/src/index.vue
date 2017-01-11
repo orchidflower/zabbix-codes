@@ -7,7 +7,7 @@
             <el-form-item>
                 <el-input v-model="queryForm.code" placeholder="错误码"></el-input>
             </el-form-item><el-form-item>
-                <el-select v-model="queryForm.system" placeholder="所属系统">
+                <el-select v-model="queryForm.system" placeholder="所属系统" :clearable="true">
                     <el-option
                     v-for="item in allSystems"
                     :label="item.label"
@@ -129,13 +129,11 @@ export default {
   methods: {
     loadAllSystems: function () {
       this.loading = true;
-      console.log("*************************************");
       this.$http.get('/api/systems/all').then((response) => { // Success
-        console.log(response.body);
         if (response.body.success==true) {
           let data = response.body.data;
           let _this = this;
-          this.allSystems = [{label:'全部', value:''}];
+          this.allSystems = [];
           data.forEach(function(item){
             _this.allSystems.push({label: item.name, value: item.system})
           });
@@ -147,9 +145,7 @@ export default {
     },
     loadAllCodes: function() {
       this.loading = true;
-      console.log("*************************************");
       this.$http.get('/api/codes/all').then((response) => { // Success
-        console.log(response.body);
         if (response.body.success==true) {
           this.tableData = response.body.data;
         }
@@ -170,8 +166,6 @@ export default {
       this.editForm.solution = row.solution;
     },
     handleEdit: function(row) {
-      console.log(this);
-      console.log(this.$refs);
       // console.log(vm);
       this.ui.dialogVisible = true;
       this.ui.dialogReadonly = false;
@@ -184,7 +178,6 @@ export default {
       this.editForm.solution = row.solution;
       let _this = this;
       this.__proto__.$nextTick(() => {
-        console.log(_this.$refs.codeInput);
         _this.$refs.codeInput.autofocus=true;
       });
     },
@@ -202,7 +195,6 @@ export default {
     handleDelete: function(row) {
       this.$confirm('此操作将删除当前记录，是否继续？', '请确认', {confirmButtonText:'确定', cancelButtonText: '取消', type: 'warning'})
         .then(() => {
-          console.log('trying to delete');
           this.$http.delete('/api/codes/ids/'+row.id)
             .then(()=>{
               this.$message({type:'info', message:'删除成功！'});
@@ -216,7 +208,6 @@ export default {
     },
     handleRedirect: function(row) {
       let code = row.code;
-      console.log('#/codes/'+code);
       this.$router.push({path: '/codes/'+code});
     },
     handleSaveOrUpdate: function() {
@@ -227,7 +218,6 @@ export default {
         // 2. 新增记录
         if (this.ui.addRecord) {
           let record = this.editForm;
-          console.log('Add record....', record);
           this.$http.post('/api/codes', record)
             .then(()=>{
               this.$message({type:'info', message:'保存成功！'});
@@ -238,7 +228,6 @@ export default {
             });
         }
         else {  // 3. 更新记录
-          console.log('Update record...');
           let record = this.editForm;
           this.$http.post('/api/codes/'+record.code, record)
             .then(()=>{

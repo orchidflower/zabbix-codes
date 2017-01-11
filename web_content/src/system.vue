@@ -10,6 +10,15 @@
                 <el-input v-model="queryForm.system" placeholder="系统"></el-input>
             </el-form-item>
             <el-form-item>
+                <el-select v-model="queryForm.contact" placeholder="请选择联系人" :clearable="true">
+                    <el-option
+                    v-for="item in allContacts"
+                    :label="item.label"
+                    :value="item.value">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item>
                 <el-button type="primary" @click="handleQuery">查询</el-button>
             </el-form-item>
             <el-form-item align="right">
@@ -20,7 +29,7 @@
         <el-table :data="filteredTableData" style="width: 100%" v-loading.body="loading">
             <el-table-column prop="system" label="编码" width="80"></el-table-column>
             <el-table-column prop="name" label="系统名称" width="180"></el-table-column>
-            <el-table-column prop="contactname" label="联系人" width="250"></el-table-column>
+            <el-table-column prop="contactname" label="联系人" width="80"></el-table-column>
             <el-table-column prop="description" label="系统介绍"></el-table-column>
             <el-table-column label="操作" inline-template :context="_self" fixed="right" width="150">
               <el-dropdown trigger="click">
@@ -86,7 +95,7 @@ export default {
         description: [{required: true, message: '请输入详细信息', trigger: 'blur'}],
         solution: [{required: true, message: '请输入解决办法', trigger: 'blur'}],
       },
-      queryForm: { system: ''},
+      queryForm: { system: '', contact: ''},
       tableData: [],
       loading: false
     }
@@ -95,9 +104,18 @@ export default {
     filteredTableData: function() {
       let self = this;
       let system = this.queryForm.system;
-      if (system=='') return self.tableData;
-      return self.tableData.filter(function(item){
+      let contact = this.queryForm.contact;
+      if (system=="" && contact=="") return self.tableData;
+      if (system=="") {
+        return self.tableData.filter(function(item){
+          return item.contact == contact;
+        });
+      }
+      if (contact=="") {
         return item.system.indexOf(system)!=-1;
+      }
+      return self.tableData.filter(function(item){
+        return item.system.indexOf(system)!=-1 && item.contact==contact;
       });
     }
   },
@@ -111,11 +129,9 @@ export default {
         // console.log(response.body);
         if (response.body.success==true) {
           let data = response.body.data;
-          console.log(data);
           this.allContacts = [];
           let _this = this;
           data.forEach(function(item){
-              console.log(item.contact);
               _this.allContacts.push({label: item.name, value: item.contact});
           });
         }
