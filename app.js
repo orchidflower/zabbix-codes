@@ -8,6 +8,8 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var codes = require('./routes/codes');
+var systems = require('./routes/systems');
+var contacts = require('./routes/contacts');
 var swagger = require('./routes/swagger');
 var log4js = require('log4js');
 var app = express();
@@ -37,6 +39,8 @@ app.use(express.static(path.join(__dirname, 'node_modules')));
 app.use('/', index);
 app.use('/users', users);
 app.use('/api/codes', codes);
+app.use('/api/systems', systems);
+app.use('/api/contacts', contacts);
 app.use('/swagger', swagger);
 
 // catch 404 and forward to error handler

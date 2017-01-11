@@ -19,7 +19,7 @@
                 <el-button type="primary" @click="handleAdd">新增</el-button>
             </el-form-item>
         </el-form>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table :data="tableData" style="width: 100%" v-loading.body="loading">
             <el-table-column prop="code" label="错误码" width="90"></el-table-column>
             <el-table-column prop="title" label="错误信息" width="250"></el-table-column>
             <el-table-column prop="description" label="详细信息"></el-table-column>
@@ -63,7 +63,6 @@
     <div>
 </template>
 <script>
-var co = require('co');
 export default {
   data() {
     return {
@@ -83,7 +82,8 @@ export default {
         solution: [{required: true, message: '请输入解决办法', trigger: 'blur'}],
       },
       queryForm: { user: '', region: ''},
-      tableData: []
+      tableData: [],
+      loading: false
     }
   },
 
@@ -93,12 +93,14 @@ export default {
 
   methods: {
     loadAllCodes: function() {
+      this.loading = true;
       console.log("*************************************");
       this.$http.get('/api/codes/all').then((response) => { // Success
         console.log(response.body);
         if (response.body.success==true) {
           this.tableData = response.body.data;
         }
+        this.loading = false;
       }, (response) => { // Failure
 
       })

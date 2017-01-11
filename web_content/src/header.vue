@@ -4,7 +4,7 @@
         <el-col :span="8">
             <el-row justify="end">
                 <el-col>
-                    <el-menu theme="dark" default-active="1" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+                    <el-menu theme="dark" default-active="1" class="el-menu-demo" mode="horizontal">
                         <el-menu-item index="1"><router-link to="/index">错误码维护</router-link></el-menu-item>
                         <el-submenu index="2">
                             <template slot="title">错误码</template>

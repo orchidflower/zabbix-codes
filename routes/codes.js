@@ -1,10 +1,11 @@
 var express = require('express');
 var wrap = require('co-express');
-var router = express.Router();
 var path = require('path');
-var services = require('../services')
+var services = require('../services');
 var co = require('co');
 var log4js = require('log4js');
+
+var router = express.Router();
 
 let logger = log4js.getLogger('routes.codes');
 
