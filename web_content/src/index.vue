@@ -22,7 +22,7 @@
                 <el-button type="primary" @click="handleAdd">新增</el-button>
             </el-form-item>
         </el-form>
-        <el-table :data="tableData" style="width: 100%" v-loading.body="loading">
+        <el-table :data="filteredTableData" style="width: 100%" v-loading.body="loading">
             <el-table-column prop="code" label="错误码" width="90"></el-table-column>
             <el-table-column prop="title" label="错误信息" width="250"></el-table-column>
             <el-table-column prop="description" label="详细信息"></el-table-column>
@@ -99,6 +99,27 @@ export default {
       loading: false
     }
   },
+  computed: {
+    filteredTableData: function() {
+      let self = this;
+      var system = this.queryForm.system;
+      var code = this.queryForm.code;
+      if (code=='' && system=='') return self.tableData;
+      if (code=='') {
+        return self.tableData.filter(function(item){
+          return item.system==system;
+        });
+      }
+      if (system=='') {
+        return self.tableData.filter(function(item){
+          return item.code.indexOf(code)!=-1;
+        });
+      }
+      return self.tableData.filter(function(item){
+        return item.system==system && item.code.indexOf(code)!=-1;
+      });
+    }
+  },
 
   mounted: function () {
     this.loadAllCodes();
@@ -114,7 +135,7 @@ export default {
         if (response.body.success==true) {
           let data = response.body.data;
           let _this = this;
-          this.allSystems = [];
+          this.allSystems = [{label:'全部', value:''}];
           data.forEach(function(item){
             _this.allSystems.push({label: item.name, value: item.system})
           });
