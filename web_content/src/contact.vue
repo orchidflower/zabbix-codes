@@ -45,7 +45,13 @@
               <el-input v-model="editForm.name" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
             </el-form-item>
             <el-form-item label="职位" prop="title">
-              <el-input v-model="editForm.title" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
+                <el-select v-model="editForm.title" placeholder="请选择职位">
+                    <el-option
+                    v-for="item in allTitles"
+                    :label="item.label"
+                    :value="item.value">
+                    </el-option>
+                </el-select>                
             </el-form-item>
             <el-form-item label="手机号" prop="mobile">
               <el-input v-model="editForm.mobile" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
@@ -68,6 +74,12 @@
 export default {
   data() {
     return {
+      allTitles: [
+          {value:'运维工程师', label:'运维工程师'},
+          {value:'研发工程师', label:'研发工程师'},
+          {value:'运营人员', label:'运营人员'},
+          {value:'系统架构师', label:'系统架构师'}
+      ],
       ui: {
         // 对话框是否可见
         dialogVisible: false,
@@ -76,7 +88,7 @@ export default {
         // 是新增记录还是编辑记录
         addRecord: false,
       },
-      editForm: {},
+      editForm: {title:''},
       editFormRules: {
         contact: [{required: true, message: '请输入邮箱', trigger: 'blur'}],
         name: [{required: true, message: '请输入姓名', trigger: 'blur'}],
