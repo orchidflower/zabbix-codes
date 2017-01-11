@@ -160,7 +160,7 @@ router.post('/:code', wrap(function *(req, res, next) {
 
 /**
  * @swagger
- * /ids/{id}:
+ * /codes/ids/{id}:
  *   delete:
  *     description: Delete one specific code
  *     tags:

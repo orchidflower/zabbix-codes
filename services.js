@@ -48,3 +48,18 @@ exports.deleteById = function *(id) {
     logger.debug(rows);
     return rows;
 }
+
+
+exports.listAllContacts = function *() {
+    logger.debug("...................list all contacts.................");
+    var sql = 'select id, contact, name, title, qq, weixin, mobile from ZABBIX_CONTACTS';
+    var rows = yield db.query(sql);
+    return rows;
+}
+
+exports.listAllSystems = function *() {
+    logger.debug("...................list all system.................");
+    var sql = 'select id, system, description, contact from ZABBIX_SYSTEMS';
+    var rows = yield db.query(sql);
+    return rows;
+}

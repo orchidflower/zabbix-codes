@@ -15,7 +15,15 @@ var options = {
         {
           name: "Codes",
           description: "Codes management related operation"
-        }
+        },
+        {
+          name: "Contacts",
+          description: "Contacts management related operation"
+        },
+        {
+          name: "Systems",
+          description: "Systems management related operation"
+        }                
     ]
   },
   apis: ['./routes/*.js'], // Path to the API docs
