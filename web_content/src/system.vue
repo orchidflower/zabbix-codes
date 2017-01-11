@@ -20,7 +20,7 @@
         <el-table :data="filteredTableData" style="width: 100%" v-loading.body="loading">
             <el-table-column prop="system" label="编码" width="80"></el-table-column>
             <el-table-column prop="name" label="系统名称" width="180"></el-table-column>
-            <el-table-column prop="contact" label="联系人" width="250"></el-table-column>
+            <el-table-column prop="contactname" label="联系人" width="250"></el-table-column>
             <el-table-column prop="description" label="系统介绍"></el-table-column>
             <el-table-column label="操作" inline-template :context="_self" fixed="right" width="150">
               <el-dropdown trigger="click">
@@ -116,7 +116,7 @@ export default {
           let _this = this;
           data.forEach(function(item){
               console.log(item.contact);
-              _this.allContacts.push({label: item.contact, value: item.contact});
+              _this.allContacts.push({label: item.name, value: item.contact});
           });
         }
       }, (response) => { // Failure

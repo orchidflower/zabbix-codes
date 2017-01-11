@@ -102,7 +102,7 @@ exports.deleteContactById = function *(id) {
 ////////////////////// System /////////////////////////////////
 exports.listAllSystems = function *() {
     logger.debug("...................list all system.................");
-    var sql = 'select id, system, name, description, contact from ZABBIX_SYSTEMS';
+    var sql = 'select a.id as id, system, a.name as name, description, a.contact, b.name as contactname from ZABBIX_SYSTEMS as a, ZABBIX_CONTACTS as b where a.contact=b.contact';
     var rows = yield db.query(sql);
     return rows;
 }
