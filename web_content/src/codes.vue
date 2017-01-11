@@ -12,32 +12,43 @@
             <el-col :span=12>-->
                 <el-card class="box-card">
                     <el-row>
-                        <el-col :span="4"><div class="text item">错误码：</div></el-col>
+                        <el-col :span="4"><div class="text item"><icon name="file" class="icon"></icon>错误码：</div></el-col>
                         <el-col :span="20"><div class="text item">{{code.code}}</div></el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="4"><div class="text item">系统：</div></el-col>
-                        <el-col :span="20"><div class="text item">{{code.system}}</div></el-col>
+                        <el-col :span="4"><div class="text item"><icon name="server" class="icon"></icon>系统：</div></el-col>
+                        <el-col :span="20"><div class="text item">{{code.systemname}}（<b>{{code.system}}</b>）</div></el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="4"><div class="text item">错误级别：</div></el-col>
-                        <el-col :span="20"><div class="text item">严重</div></el-col>
+                        <el-col :span="4"><div class="text item"><icon name="warning" class="icon"></icon>警告级别：</div></el-col>
+                        <el-col :span="20">
+                            <div class="text item">{{code.levelname}} (<b>{{code.level}}</b>)<br>
+                                <icon name="comments" class="icon"></icon>{{code.leveldescription}}
+                            </div>
+                        </el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="4"><div class="text item">错误信息：</div></el-col>
+                        <el-col :span="4"><div class="text item"><icon name="tag" class="icon"></icon>错误信息：</div></el-col>
                         <el-col :span="20"><div class="text item">{{code.title}}</div></el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="4"><div class="text item">详细信息：</div></el-col>
+                        <el-col :span="4"><div class="text item"><icon name="commenting" class="icon"></icon>详细信息：</div></el-col>
                         <el-col :span="20"><div class="text item">{{code.description}}</div></el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="4"><div class="text item">解决方案：</div></el-col>
+                        <el-col :span="4"><div class="text item"><icon name="cog" class="icon"></icon>解决方案：</div></el-col>
                         <el-col :span="20"><div class="text item">{{code.solution}}</div></el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="4"><div class="text item">联系人：</div></el-col>
-                        <el-col :span="20"><div class="text item">{{code.contact}}</div></el-col>
+                        <el-col :span="4"><div class="text item"><icon name="user" class="icon"></icon>联系人：</div></el-col>
+                        <el-col :span="20">
+                            <div class="text item">
+                                {{code.contactname}}（{{code.contact}}）<br>
+                                <icon name="mobile" scale="1.5" class="icon"></icon>： {{code.mobile}} <br>
+                                <icon name="qq" class="icon"></icon>： {{code.qq}} <br>
+                                <icon name="weixin" class="icon"></icon>： {{code.weixin}}
+                            </div>
+                        </el-col>
                     </el-row>
                 </el-card>
             <!--</el-col>
@@ -46,6 +57,14 @@
 </template>
 
 <script>
+import Vue from 'vue'
+import Icon from 'vue-awesome/components/Icon.vue'
+import 'vue-awesome/icons'
+// import 'vue-awesome/icons/qq'
+// import 'vue-awesome/icons/mobile'
+// import 'vue-awesome/icons/weixin'
+Vue.component('Icon', Icon);
+
     export default {
         mounted : function () {
             this.getCodeDetails();
@@ -89,4 +108,8 @@
 </script>
 
 <style>
+.icon {
+    color:grey;
+    width: 32px;
+}
 </style>

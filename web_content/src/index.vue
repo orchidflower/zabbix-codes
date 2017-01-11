@@ -57,6 +57,15 @@
                     </el-option>
                 </el-select>              
             </el-form-item>
+            <el-form-item label="报警级别" prop="level">
+                <el-select v-model="editForm.level" placeholder="请选择报警级别">
+                    <el-option
+                    v-for="item in allLevels"
+                    :label="item.label"
+                    :value="item.value">
+                    </el-option>
+                </el-select>              
+            </el-form-item>
             <el-form-item label="错误信息" prop="title">
               <el-input v-model="editForm.title" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
             </el-form-item>
@@ -65,6 +74,15 @@
             </el-form-item>
             <el-form-item label="解决办法" prop="solution">
               <el-input type="textarea" v-model="editForm.solution" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
+            </el-form-item>
+            <el-form-item label="联系人" prop="contact">
+                <el-select v-model="editForm.contact" placeholder="请选择联系人">
+                    <el-option
+                    v-for="item in allContacts"
+                    :label="item.label"
+                    :value="item.value">
+                    </el-option>
+                </el-select>              
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
@@ -79,6 +97,8 @@ export default {
   data() {
     return {
       allSystems: [],
+      allContacts: [],
+      allLevels: [],
       ui: {
         // 对话框是否可见
         dialogVisible: false,
@@ -87,7 +107,7 @@ export default {
         // 是新增记录还是编辑记录
         addRecord: false,
       },
-      editForm: {system:''},
+      editForm: {system:'', level:'', contact:''},
       editFormRules: {
         code: [{required: true, message: '请输入错误码', trigger: 'blur'}],
         title: [{required: true, message: '请输入错误信息', trigger: 'blur'}],
@@ -124,6 +144,8 @@ export default {
   mounted: function () {
     this.loadAllCodes();
     this.loadAllSystems();
+    this.loadAllLevels();
+    this.loadAllContacts();
   },
 
   methods: {
@@ -143,6 +165,37 @@ export default {
 
       })
     },
+    loadAllContacts: function() {
+      this.$http.get('/api/contacts/all').then((response) => { // Success
+        // console.log(response.body);
+        if (response.body.success==true) {
+          let data = response.body.data;
+          this.allContacts = [];
+          let _this = this;
+          data.forEach(function(item){
+              _this.allContacts.push({label: item.name, value: item.contact});
+          });
+        }
+      }, (response) => { // Failure
+      })
+    },    
+    loadAllLevels: function () {
+      this.loading = true;
+      this.$http.get('/api/support/levels').then((response) => { // Success
+        if (response.body.success==true) {
+          let data = response.body.data;
+          let self = this;
+          this.allLevels = [];
+          data.forEach(function(item){
+            self.allLevels.push({label: item.name, value: item.level})
+          });
+        }
+        this.loading = false;
+      }, (response) => { // Failure
+
+      })
+    },
+        
     loadAllCodes: function() {
       this.loading = true;
       this.$http.get('/api/codes/all').then((response) => { // Success
@@ -160,10 +213,12 @@ export default {
       this.ui.addRecord = false;
       this.editForm.id = row.id;
       this.editForm.code = row.code;
+      this.editForm.level = row.level;
       this.editForm.system = row.system;
       this.editForm.title = row.title;
       this.editForm.description = row.description;
       this.editForm.solution = row.solution;
+      this.editForm.contact = row.contact;
     },
     handleEdit: function(row) {
       // console.log(vm);
@@ -172,10 +227,12 @@ export default {
       this.ui.addRecord = false;
       this.editForm.id = row.id;
       this.editForm.code = row.code;
+      this.editForm.level = row.level;
       this.editForm.system = row.system;
       this.editForm.title = row.title;
       this.editForm.description = row.description;
       this.editForm.solution = row.solution;
+      this.editForm.contact = row.contact;
       let _this = this;
       this.__proto__.$nextTick(() => {
         _this.$refs.codeInput.autofocus=true;
@@ -188,9 +245,11 @@ export default {
       this.editForm.id = '';
       this.editForm.code = '';
       this.editForm.system = '';
+      this.editForm.level = '';
       this.editForm.title = '';
       this.editForm.description = '';
       this.editForm.solution = '';
+      this.editForm.contact = '';
     },
     handleDelete: function(row) {
       this.$confirm('此操作将删除当前记录，是否继续？', '请确认', {confirmButtonText:'确定', cancelButtonText: '取消', type: 'warning'})

@@ -33,4 +33,29 @@ router.get('/titles', wrap(function *(req, res, next){
   res.json(ret);    
 }));
 
+/**
+ * @swagger
+ * /support/levels:
+ *   get:
+ *     description: Get all levels
+ *     tags:
+ *       - Support
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: check
+ */
+router.get('/levels', wrap(function *(req, res, next){
+  var rows = yield services.listAllLevels();
+  if (rows==null) {
+    let ret = {success: false, message: '没有相关记录'};
+    res.json(ret);
+    return;
+  }
+  let ret = {success: true, data: rows};
+  res.json(ret);    
+}));
+
+
 module.exports = router;

@@ -18,7 +18,7 @@ module.exports = {
         // 通过babel转换
         loader: 'babel-loader',
         // 不用转换的node_modules文件夹
-        exclude: /node_modules/
+        exclude: /node_modules(?![\\/]vue-awesome[\\/])/
       },
       {
         test: /\.vue$/,

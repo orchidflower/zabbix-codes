@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack-dev-server --content-base=./views --inline --hot"    
+    "dev": "webpack-dev-server --content-base=./views --inline --hot"
   },
   "author": "limin.zhang",
   "license": "ISC",
   "dependencies": {
-  	 "vue": "^2.1.6",
+    "vue": "^2.1.6",
+    "vue-awesome": "^2.0.3",
     "vue-resource": "^1.0.3",
     "vue-router": "^2.1.1"
   },

@@ -6,14 +6,22 @@ let logger = log4js.getLogger('services');
 /////////////////////////// Codes //////////////////////////////////
 exports.listAllCodes = function *() {
     logger.debug("...................list all codes.................");
-    var sql = 'select id, code, system, title, level, description, solution, contact from ZABBIX_CODES';
+    var sql = `select a.id as id, code, a.system as system, b.name as systemname, a.title as title, a.level as level, 
+               d.name as levelname, a.description, solution, a.contact as contact, 
+               c.name as contactname 
+               from ZABBIX_CODES as a, ZABBIX_SYSTEMS as b, ZABBIX_CONTACTS as c, ZABBIX_LEVELS as d
+               where a.system=b.system and a.contact=c.contact and a.level=d.level`;
     var rows = yield db.query(sql);
     return rows;
 }
 
 exports.queryByCode = function *(code) {
     logger.debug('....................code = ' + code + '.................');
-    var sql = 'select id, code, system, title, level, description, solution, contact from ZABBIX_CODES where code = ?';
+    var sql = `select a.id as id, code, a.system as system, b.name as systemname, a.title as title, a.level as level, 
+               d.name as levelname, a.description, solution, a.contact as contact, 
+               c.name as contactname, d.description as leveldescription, c.qq, c.weixin, c.mobile
+               from ZABBIX_CODES as a, ZABBIX_SYSTEMS as b, ZABBIX_CONTACTS as c, ZABBIX_LEVELS as d
+               where a.system=b.system and a.contact=c.contact and a.level=d.level and code = ?`;
     var values = [code];
     var rows = yield db.query(sql, values);
     if (rows.length>=1)
@@ -150,6 +158,14 @@ exports.deleteSystemById = function *(id) {
 exports.listAllTitles = function *() {
     logger.debug("...................list all titles.................");
     var sql = 'select id, title, name from ZABBIX_TITLES';
+    var rows = yield db.query(sql);
+    return rows;
+}
+
+////////////////////////// Levels ///////////////////////////////////
+exports.listAllLevels = function *() {
+    logger.debug("...................list all levels.................");
+    var sql = 'select id, level, name from ZABBIX_LEVELS';
     var rows = yield db.query(sql);
     return rows;
 }
