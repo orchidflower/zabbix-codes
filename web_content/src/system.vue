@@ -92,8 +92,8 @@ export default {
       editFormRules: {
         system: [{required: true, message: '请输入系统代码', trigger: 'blur'}],
         name: [{required: true, message: '请输入系统名称', trigger: 'blur'}],
-        description: [{required: true, message: '请输入详细信息', trigger: 'blur'}],
-        contact: [{required: true, message: '请输入联系人', trigger: 'blur'}],
+        description: [{required: true, message: '请输入详细介绍', trigger: 'blur'}],
+        contact: [{required: true, message: '请选择联系人', trigger: 'blur'}],
       },
       queryForm: { system: '', contact: ''},
       tableData: [],

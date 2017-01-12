@@ -26,6 +26,10 @@
 		margin-top: 40px;
 		padding: 10px;
 	}
+
+	.description {
+		color:darkgray;
+	}
 </style>
 <script>
 export default {

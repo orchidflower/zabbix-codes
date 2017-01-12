@@ -17,13 +17,23 @@
                     </el-row>
                     <el-row>
                         <el-col :span="4"><div class="text item"><icon name="server" class="icon"></icon>系统：</div></el-col>
-                        <el-col :span="20"><div class="text item">{{code.systemname}}（<b>{{code.system}}</b>）</div></el-col>
+                        <el-col :span="20"><div class="text item">
+                            {{code.systemname}}（<b>{{code.system}}</b>）<br>
+                            <span class="description">
+                                <icon name="comments" class="icon"></icon>{{code.systemdescription}}<br>
+                                <icon name="user" class="icon"></icon>{{code.systemcontact}}
+                            </span>
+                        </div></el-col>
                     </el-row>
                     <el-row>
                         <el-col :span="4"><div class="text item"><icon name="warning" class="icon"></icon>警告级别：</div></el-col>
                         <el-col :span="20">
-                            <div class="text item">{{code.levelname}} (<b>{{code.level}}</b>)<br>
-                                <icon name="comments" class="icon"></icon>{{code.leveldescription}}
+                            <div class="text item">
+                                {{code.levelname}} (<b>{{code.level}}</b>)<br>
+                                <span class="description">
+                                    <icon name="comments" class="icon"></icon>{{code.leveldescription}}<br>
+                                    <icon name="user" class="icon"></icon>{{code.systemcontact}}
+                                </span>
                             </div>
                         </el-col>
                     </el-row>
@@ -44,9 +54,11 @@
                         <el-col :span="20">
                             <div class="text item">
                                 {{code.contactname}}（{{code.contact}}）<br>
-                                <icon name="mobile" scale="1.5" class="icon"></icon>： {{code.mobile}} <br>
-                                <icon name="qq" class="icon"></icon>： {{code.qq}} <br>
-                                <icon name="weixin" class="icon"></icon>： {{code.weixin}}
+                                <span class="description">                                
+                                    <icon name="mobile" scale="1.5" class="icon"></icon>： {{code.mobile}} <br>
+                                    <icon name="qq" class="icon"></icon>： {{code.qq}} <br>
+                                    <icon name="weixin" class="icon"></icon>： {{code.weixin}}
+                                </span>
                             </div>
                         </el-col>
                     </el-row>

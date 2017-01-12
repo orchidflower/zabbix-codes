@@ -87,9 +87,7 @@ export default {
       editFormRules: {
         contact: [{required: true, message: '请输入邮箱', trigger: 'blur'}],
         name: [{required: true, message: '请输入姓名', trigger: 'blur'}],
-        title: [{required: true, message: '请输入错误信息', trigger: 'blur'}],
-        description: [{required: true, message: '请输入详细信息', trigger: 'blur'}],
-        solution: [{required: true, message: '请输入解决办法', trigger: 'blur'}],
+        title: [{required: true, message: '请选择职位', trigger: 'blur'}]
       },
       queryForm: { contact: ''},
       tableData: [],
