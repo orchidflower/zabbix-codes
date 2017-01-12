@@ -25,10 +25,12 @@
 
         <!--Table Area-->
         <el-table :data="filteredTableData" style="width: 100%" v-loading.body="loading">
-            <el-table-column prop="code" label="错误码" width="90"></el-table-column>
-            <el-table-column prop="title" label="错误信息" width="250"></el-table-column>
-            <el-table-column prop="description" label="详细信息"></el-table-column>
-            <el-table-column prop="solution" label="解决办法"></el-table-column>
+            <el-table-column prop="code" label="错误码" width="120"></el-table-column>
+            <el-table-column prop="systemname" label="所属系统" width="120"></el-table-column>
+            <el-table-column prop="contactname" label="联系人" width="100"></el-table-column>
+            <el-table-column prop="title" label="错误信息"></el-table-column>
+            <!--<el-table-column prop="description" label="详细信息"></el-table-column>
+            <el-table-column prop="solution" label="解决办法"></el-table-column>-->
             <el-table-column label="操作" inline-template :context="_self" fixed="right" width="150">
               <el-dropdown trigger="click">
                 <el-button type="primary" size="small">
@@ -119,7 +121,7 @@ export default {
         solution: [{required: true, message: '请输入解决办法', trigger: 'blur'}],
         contact: [{required: true, message: '请选择联系人', trigger: 'blur'}],
       },
-      queryForm: { code: '', system:''},
+      queryForm: { code: '', system:'SYS'},
       tableData: [],
       loading: false
     }
@@ -158,7 +160,6 @@ export default {
 
   methods: {
     loadAllSystems: function () {
-      this.loading = true;
       this.$http.get('/api/systems/all').then((response) => { // Success
         if (response.body.success==true) {
           let data = response.body.data;
@@ -169,7 +170,6 @@ export default {
           });
           _this.filteredAllSystems = _this.allSystems;
         }
-        this.loading = false;
       }, (response) => { // Failure
 
       })
@@ -189,7 +189,6 @@ export default {
       })
     },    
     loadAllLevels: function () {
-      this.loading = true;
       this.$http.get('/api/support/levels').then((response) => { // Success
         if (response.body.success==true) {
           let data = response.body.data;
@@ -199,7 +198,6 @@ export default {
             self.allLevels.push({label: item.name+"（"+item.level+"）", value: item.level})
           });
         }
-        this.loading = false;
       }, (response) => { // Failure
 
       })

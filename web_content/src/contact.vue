@@ -126,7 +126,6 @@ export default {
       })
     },
     loadAllTitles: function() {
-      this.loading = true;
       console.log("*************************************");
       this.$http.get('/api/support/titles').then((response) => { // Success
         console.log(response.body);
@@ -137,7 +136,6 @@ export default {
             self.allTitles.push({label: item.name+"（"+item.title+"）", value: item.title});
           });
         }
-        this.loading = false;
       }, (response) => { // Failure
 
       })

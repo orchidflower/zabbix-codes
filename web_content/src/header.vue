@@ -8,8 +8,8 @@
                         <el-menu-item index="1"><router-link to="/index">错误码维护</router-link></el-menu-item>
                         <el-submenu index="2">
                             <template slot="title">错误码</template>
-                            <el-menu-item index="2-1"><router-link to="/codes/SYS101">Codes SYS101</router-link></el-menu-item>
-                            <el-menu-item index="2-2"><router-link to="/codes/SYS102">Codes SYS102</router-link></el-menu-item>
+                            <el-menu-item index="2-1"><router-link to="/codes/SYS-00-100">Codes SYS-00-100</router-link></el-menu-item>
+                            <el-menu-item index="2-2"><router-link to="/codes/SYS-00-101">Codes SYS-00-101</router-link></el-menu-item>
                         </el-submenu>
                         <el-menu-item index="3"><router-link to="/system">系统维护</router-link></el-menu-item>
                         <el-menu-item index="4"><router-link to="/contact">联系人维护</router-link></el-menu-item>
