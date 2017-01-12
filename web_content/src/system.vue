@@ -97,7 +97,7 @@ export default {
       },
       queryForm: { system: '', contact: ''},
       tableData: [],
-      loading: false
+      loading: true
     }
   },
   computed: {

@@ -8,8 +8,6 @@
         <!--Query Form  -->
         <el-form :inline="true" :model="queryForm" class="demo-form-inline">
             <el-form-item>
-                <el-input v-model="queryForm.code" placeholder="错误码"></el-input>
-            </el-form-item><el-form-item>
                 <el-select v-model="queryForm.system" placeholder="所属系统" :clearable="true" filterable>
                     <el-option
                     v-for="item in allSystems"
@@ -17,6 +15,9 @@
                     :value="item.value">
                     </el-option>                   
                 </el-select>
+            </el-form-item>
+            <el-form-item>
+                <el-input v-model="queryForm.code" placeholder="错误码"></el-input>
             </el-form-item>
             <el-form-item align="right">
                 <el-button type="primary" @click="handleAdd">新增</el-button>
@@ -26,11 +27,11 @@
         <!--Table Area-->
         <el-table :data="filteredTableData" style="width: 100%" v-loading.body="loading">
             <el-table-column prop="code" label="错误码" width="120"></el-table-column>
-            <el-table-column prop="systemname" label="所属系统" width="120"></el-table-column>
-            <el-table-column prop="contactname" label="联系人" width="100"></el-table-column>
+            <el-table-column prop="systemname" label="所属系统" width="180"></el-table-column>
             <el-table-column prop="title" label="错误信息"></el-table-column>
             <!--<el-table-column prop="description" label="详细信息"></el-table-column>
             <el-table-column prop="solution" label="解决办法"></el-table-column>-->
+            <el-table-column prop="contactname" label="联系人" width="100"></el-table-column>
             <el-table-column label="操作" inline-template :context="_self" fixed="right" width="150">
               <el-dropdown trigger="click">
                 <el-button type="primary" size="small">
