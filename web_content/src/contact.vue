@@ -45,7 +45,7 @@
               <el-input v-model="editForm.name" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
             </el-form-item>
             <el-form-item label="职位" prop="title">
-                <el-select v-model="editForm.title" placeholder="请选择职位">
+                <el-select v-model="editForm.title" placeholder="请选择职位" filterable>
                     <el-option
                     v-for="item in allTitles"
                     :label="item.label"
@@ -133,7 +133,7 @@ export default {
           let allTitles = response.body.data;
           let self = this;
           allTitles.forEach(function(item) {
-            self.allTitles.push({label: item.name, value: item.title});
+            self.allTitles.push({label: item.name+"（"+item.title+"）", value: item.title});
           });
         }
         this.loading = false;

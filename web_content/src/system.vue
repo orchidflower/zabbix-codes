@@ -10,7 +10,7 @@
                 <el-input v-model="queryForm.system" placeholder="系统"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-select v-model="queryForm.contact" placeholder="请选择联系人" :clearable="true">
+                <el-select v-model="queryForm.contact" placeholder="请选择联系人" :clearable="true" filterable>
                     <el-option
                     v-for="item in allContacts"
                     :label="item.label"
@@ -56,7 +56,7 @@
 		    </el-form-item>
             <el-form-item label="联系人" prop="contact">
               <!--<el-input v-model="editForm.contact" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>-->
-                <el-select v-model="editForm.contact" placeholder="请选择联系人">
+                <el-select v-model="editForm.contact" placeholder="请选择联系人" filterable>
                     <el-option
                     v-for="item in allContacts"
                     :label="item.label"
@@ -132,7 +132,7 @@ export default {
           this.allContacts = [];
           let _this = this;
           data.forEach(function(item){
-              _this.allContacts.push({label: item.name, value: item.contact});
+              _this.allContacts.push({label: item.name+"（"+item.contact+"）", value: item.contact});
           });
         }
       }, (response) => { // Failure

@@ -15,14 +15,9 @@
                     v-for="item in allSystems"
                     :label="item.label"
                     :value="item.value">
-                      <!--<span style="float: left">{{ item.label }}</span>
-                      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>  -->
                     </el-option>                   
                 </el-select>
             </el-form-item>
-            <!--<el-form-item>
-                <el-button type="primary" @click="handleQuery">查询</el-button>
-            </el-form-item>-->
             <el-form-item align="right">
                 <el-button type="primary" @click="handleAdd">新增</el-button>
             </el-form-item>
@@ -56,24 +51,20 @@
     					<el-input v-model="editForm.code" auto-complete="off" v-bind:readonly="ui.dialogReadonly" ref="codeInput"></el-input>
 		    		</el-form-item>
             <el-form-item label="所属系统" prop="system">
-                <el-select v-model="editForm.system" placeholder="请选择系统">
+                <el-select v-model="editForm.system" placeholder="请选择系统" filterable>
                     <el-option
                     v-for="item in allSystems"
                     :label="item.label"
                     :value="item.value">
-                      <!--<span style="float: left">{{ item.label }}</span>
-                      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>                                         -->
                     </el-option>
                 </el-select>              
             </el-form-item>
             <el-form-item label="报警级别" prop="level">
-                <el-select v-model="editForm.level" placeholder="请选择报警级别">
+                <el-select v-model="editForm.level" placeholder="请选择报警级别" filterable>
                     <el-option
                     v-for="item in allLevels"
                     :label="item.label"
                     :value="item.value">
-                      <span style="float: left">{{ item.label }}</span>
-                      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>                     
                     </el-option>
                 </el-select>              
             </el-form-item>
@@ -87,13 +78,11 @@
               <el-input type="textarea" v-model="editForm.solution" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
             </el-form-item>
             <el-form-item label="联系人" prop="contact">
-                <el-select v-model="editForm.contact" placeholder="请选择联系人">
+                <el-select v-model="editForm.contact" placeholder="请选择联系人" filterable>
                     <el-option
                     v-for="item in allContacts"
                     :label="item.label"
                     :value="item.value">
-                      <span style="float: left">{{ item.label }}</span>
-                      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>                                         
                     </el-option>
                 </el-select>              
             </el-form-item>
@@ -110,7 +99,6 @@ export default {
   data() {
     return {
       allSystems: [],
-      filteredAllSystems: [],
       allContacts: [],
       allLevels: [],
       ui: {
@@ -171,7 +159,7 @@ export default {
           let _this = this;
           this.allSystems = [];
           data.forEach(function(item){
-            _this.allSystems.push({label: item.name+"（"+item.system+")", value: item.system})
+            _this.allSystems.push({label: item.name+"（"+item.system+"）", value: item.system})
           });
           _this.filteredAllSystems = _this.allSystems;
         }
@@ -188,7 +176,7 @@ export default {
           this.allContacts = [];
           let _this = this;
           data.forEach(function(item){
-              _this.allContacts.push({label: item.name, value: item.contact});
+              _this.allContacts.push({label: item.name+"（"+item.contact+"）", value: item.contact});
           });
         }
       }, (response) => { // Failure
@@ -202,7 +190,7 @@ export default {
           let self = this;
           this.allLevels = [];
           data.forEach(function(item){
-            self.allLevels.push({label: item.name, value: item.level})
+            self.allLevels.push({label: item.name+"（"+item.level+"）", value: item.level})
           });
         }
         this.loading = false;
@@ -313,22 +301,6 @@ export default {
             });
         }
       }));
-    },
-    handleQuery: function() {
-      console.log('Try to query....');
-    },
-    filterSelectSystem: function(query) {
-      // if (query=='') {
-      //   this.filteredAllSystems = this.allSystems;
-      // } else {
-      //   setTimeout(()=>{
-      //     this.filteredAllSystems = this.allSystems.filter(item=>{
-      //       return item.label.toLowerCase().indexOf(query.toLowerCase()) > -1 || item.value.toLowerCase().indexOf(query.toLowerCase()) > -1;
-      //     });
-      //   }, 200);
-      // }
-      console.log("++++++++++++" + query);
-      console.log("------------"+this.queryForm.system);
     }
   }
 }
