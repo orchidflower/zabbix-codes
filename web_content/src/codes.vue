@@ -16,7 +16,15 @@
                         <el-col :span="20"><div class="text item">{{code.code}}</div></el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="4"><div class="text item"><icon name="server" class="icon"></icon>系统：</div></el-col>
+                        <el-col :span="4"><div class="text item"><icon name="tag" class="icon"></icon>错误信息：</div></el-col>
+                        <el-col :span="20"><div class="text item">{{code.title}}</div></el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="4"><div class="text item"><icon name="commenting" class="icon"></icon>详细信息：</div></el-col>
+                        <el-col :span="20"><div class="text item">{{code.description}}</div></el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="4"><div class="text item"><icon name="server" class="icon"></icon>所属系统：</div></el-col>
                         <el-col :span="20"><div class="text item">
                             {{code.systemname}}（<b>{{code.system}}</b>）<br>
                             <span class="description">
@@ -36,14 +44,6 @@
                                 </span>
                             </div>
                         </el-col>
-                    </el-row>
-                    <el-row>
-                        <el-col :span="4"><div class="text item"><icon name="tag" class="icon"></icon>错误信息：</div></el-col>
-                        <el-col :span="20"><div class="text item">{{code.title}}</div></el-col>
-                    </el-row>
-                    <el-row>
-                        <el-col :span="4"><div class="text item"><icon name="commenting" class="icon"></icon>详细信息：</div></el-col>
-                        <el-col :span="20"><div class="text item">{{code.description}}</div></el-col>
                     </el-row>
                     <el-row>
                         <el-col :span="4"><div class="text item"><icon name="cog" class="icon"></icon>解决方案：</div></el-col>
