@@ -8,9 +8,9 @@
             <el-form-item>
                 <el-input v-model="queryForm.contact" placeholder="联系人"></el-input>
             </el-form-item>
-            <el-form-item>
+            <!--<el-form-item>
                 <el-button type="primary" @click="handleQuery">查询</el-button>
-            </el-form-item>
+            </el-form-item>-->
             <el-form-item align="right">
                 <el-button type="primary" @click="handleAdd">新增</el-button>
             </el-form-item>
@@ -39,7 +39,7 @@
         <el-dialog title="详细信息" v-model="ui.dialogVisible">
           <el-form :model="editForm" :rules="editFormRules" label-width="100px" ref="editForm">
             <el-form-item label="邮箱" prop="contact">
-                <el-input v-model="editForm.contact" auto-complete="off" v-bind:readonly="ui.dialogReadonly" ref="codeInput"></el-input>
+                <el-input v-model="editForm.contact" auto-complete="off" v-bind:readonly="contactReadonly" ref="codeInput"></el-input>
             </el-form-item>
             <el-form-item label="姓名" prop="name">
               <el-input v-model="editForm.name" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
@@ -104,6 +104,9 @@ export default {
       return self.tableData.filter(function(item){
         return item.contact.indexOf(contact)!=-1;
       });
+    },
+    contactReadonly: function() {
+      return !this.ui.addRecord;
     }
   },
   mounted: function () {
@@ -153,8 +156,8 @@ export default {
       this.editForm.qq = '';
       this.editForm.weixin = '';        
     },
-    handleQuery: function() {
-    },
+    // handleQuery: function() {
+    // },
     handleView: function(row) {
       this.ui.dialogVisible = true;
       this.ui.dialogReadonly = true;

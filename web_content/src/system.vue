@@ -18,9 +18,9 @@
                     </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item>
+            <!--<el-form-item>
                 <el-button type="primary" @click="handleQuery">查询</el-button>
-            </el-form-item>
+            </el-form-item>-->
             <el-form-item align="right">
                 <el-button type="primary" @click="handleAdd">新增</el-button>
             </el-form-item>
@@ -49,7 +49,7 @@
         <el-dialog title="详细信息" v-model="ui.dialogVisible">
           <el-form :model="editForm" :rules="editFormRules" label-width="100px" ref="editForm">
             <el-form-item label="系统代码" prop="system">
-    			<el-input v-model="editForm.system" auto-complete="off" v-bind:readonly="ui.dialogReadonly" ref="codeInput"></el-input>
+    			<el-input v-model="editForm.system" auto-complete="off" v-bind:readonly="systemReadonly" ref="codeInput"></el-input>
 		    </el-form-item>
             <el-form-item label="系统名称" prop="name">
     			<el-input v-model="editForm.name" auto-complete="off" v-bind:readonly="ui.dialogReadonly" ref="codeInput"></el-input>
@@ -90,10 +90,10 @@ export default {
       },
       editForm: {contact:''},
       editFormRules: {
-        code: [{required: true, message: '请输入错误码', trigger: 'blur'}],
-        title: [{required: true, message: '请输入错误信息', trigger: 'blur'}],
+        system: [{required: true, message: '请输入系统代码', trigger: 'blur'}],
+        name: [{required: true, message: '请输入系统名称', trigger: 'blur'}],
         description: [{required: true, message: '请输入详细信息', trigger: 'blur'}],
-        solution: [{required: true, message: '请输入解决办法', trigger: 'blur'}],
+        contact: [{required: true, message: '请输入联系人', trigger: 'blur'}],
       },
       queryForm: { system: '', contact: ''},
       tableData: [],
@@ -117,6 +117,9 @@ export default {
       return self.tableData.filter(function(item){
         return item.system.indexOf(system)!=-1 && item.contact==contact;
       });
+    },
+    systemReadonly: function () {
+      return !this.ui.addRecord;
     }
   },
   mounted: function () {
@@ -157,18 +160,20 @@ export default {
       this.ui.addRecord = true;
       this.editForm.id = '';
       this.editForm.system = '';
+      this.editForm.name = '';
       this.editForm.contact = '';
       this.editForm.description = '';
     },
-    handleQuery: function() {
+    // handleQuery: function() {
         
-    },
+    // },
     handleView: function(row) {
       this.ui.dialogVisible = true;
       this.ui.dialogReadonly = true;
       this.ui.addRecord = false;
       this.editForm.id = row.id;
       this.editForm.system = row.system;
+      this.editForm.name = row.name;
       this.editForm.contact = row.contact;
       this.editForm.description = row.description;
     },

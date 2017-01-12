@@ -48,7 +48,7 @@
         <el-dialog title="详细信息" v-model="ui.dialogVisible">
           <el-form :model="editForm" :rules="editFormRules" label-width="100px" ref="editForm">
             <el-form-item label="错误码" prop="code">
-    					<el-input v-model="editForm.code" auto-complete="off" v-bind:readonly="ui.dialogReadonly" ref="codeInput"></el-input>
+    					<el-input v-model="editForm.code" auto-complete="off" v-bind:readonly="codeReadonly" ref="codeInput"></el-input>
 		    		</el-form-item>
             <el-form-item label="所属系统" prop="system">
                 <el-select v-model="editForm.system" placeholder="请选择系统" filterable>
@@ -112,9 +112,12 @@ export default {
       editForm: {system:'', level:'', contact:''},
       editFormRules: {
         code: [{required: true, message: '请输入错误码', trigger: 'blur'}],
+        system: [{required: true, message: '请选择所属系统', trigger: 'blur'}],
+        level: [{required: true, message: '请选择报警级别', trigger: 'blur'}],
         title: [{required: true, message: '请输入错误信息', trigger: 'blur'}],
         description: [{required: true, message: '请输入详细信息', trigger: 'blur'}],
         solution: [{required: true, message: '请输入解决办法', trigger: 'blur'}],
+        contact: [{required: true, message: '请选择联系人', trigger: 'blur'}],
       },
       queryForm: { code: '', system:''},
       tableData: [],
@@ -140,6 +143,9 @@ export default {
       return self.tableData.filter(function(item){
         return item.system==system && item.code.indexOf(code)!=-1;
       });
+    },
+    codeReadonly: function() {
+      return !this.ui.addRecord;
     }
   },
 
@@ -236,10 +242,6 @@ export default {
       this.editForm.description = row.description;
       this.editForm.solution = row.solution;
       this.editForm.contact = row.contact;
-      let _this = this;
-      this.__proto__.$nextTick(() => {
-        _this.$refs.codeInput.autofocus=true;
-      });
     },
     handleAdd: function() {
       this.ui.dialogVisible = true;
