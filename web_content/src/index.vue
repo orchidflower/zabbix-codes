@@ -1,27 +1,34 @@
 <template>
     <div>
+        <!-- Navigation //-->
         <el-breadcrumb separator="/" class="appnav">
             <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-        </el-breadcrumb>      
+        </el-breadcrumb>    
+
+        <!--Query Form  -->
         <el-form :inline="true" :model="queryForm" class="demo-form-inline">
             <el-form-item>
                 <el-input v-model="queryForm.code" placeholder="错误码"></el-input>
             </el-form-item><el-form-item>
-                <el-select v-model="queryForm.system" placeholder="所属系统" :clearable="true">
+                <el-select v-model="queryForm.system" placeholder="所属系统" :clearable="true" filterable>
                     <el-option
                     v-for="item in allSystems"
                     :label="item.label"
                     :value="item.value">
-                    </el-option>
+                      <!--<span style="float: left">{{ item.label }}</span>
+                      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>  -->
+                    </el-option>                   
                 </el-select>
             </el-form-item>
-            <el-form-item>
+            <!--<el-form-item>
                 <el-button type="primary" @click="handleQuery">查询</el-button>
-            </el-form-item>
+            </el-form-item>-->
             <el-form-item align="right">
                 <el-button type="primary" @click="handleAdd">新增</el-button>
             </el-form-item>
         </el-form>
+
+        <!--Table Area-->
         <el-table :data="filteredTableData" style="width: 100%" v-loading.body="loading">
             <el-table-column prop="code" label="错误码" width="90"></el-table-column>
             <el-table-column prop="title" label="错误信息" width="250"></el-table-column>
@@ -54,6 +61,8 @@
                     v-for="item in allSystems"
                     :label="item.label"
                     :value="item.value">
+                      <!--<span style="float: left">{{ item.label }}</span>
+                      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>                                         -->
                     </el-option>
                 </el-select>              
             </el-form-item>
@@ -63,6 +72,8 @@
                     v-for="item in allLevels"
                     :label="item.label"
                     :value="item.value">
+                      <span style="float: left">{{ item.label }}</span>
+                      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>                     
                     </el-option>
                 </el-select>              
             </el-form-item>
@@ -81,6 +92,8 @@
                     v-for="item in allContacts"
                     :label="item.label"
                     :value="item.value">
+                      <span style="float: left">{{ item.label }}</span>
+                      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>                                         
                     </el-option>
                 </el-select>              
             </el-form-item>
@@ -97,6 +110,7 @@ export default {
   data() {
     return {
       allSystems: [],
+      filteredAllSystems: [],
       allContacts: [],
       allLevels: [],
       ui: {
@@ -157,8 +171,9 @@ export default {
           let _this = this;
           this.allSystems = [];
           data.forEach(function(item){
-            _this.allSystems.push({label: item.name, value: item.system})
+            _this.allSystems.push({label: item.name+"（"+item.system+")", value: item.system})
           });
+          _this.filteredAllSystems = _this.allSystems;
         }
         this.loading = false;
       }, (response) => { // Failure
@@ -301,6 +316,19 @@ export default {
     },
     handleQuery: function() {
       console.log('Try to query....');
+    },
+    filterSelectSystem: function(query) {
+      // if (query=='') {
+      //   this.filteredAllSystems = this.allSystems;
+      // } else {
+      //   setTimeout(()=>{
+      //     this.filteredAllSystems = this.allSystems.filter(item=>{
+      //       return item.label.toLowerCase().indexOf(query.toLowerCase()) > -1 || item.value.toLowerCase().indexOf(query.toLowerCase()) > -1;
+      //     });
+      //   }, 200);
+      // }
+      console.log("++++++++++++" + query);
+      console.log("------------"+this.queryForm.system);
     }
   }
 }
