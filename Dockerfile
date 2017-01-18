@@ -1,4 +1,5 @@
-FROM docker-harbor.xwf-id.com/base/pm2-gui:6.9-slim
+FROM docker-registry.xwf-id.com/base/pm2-gui:6.9-slim
+MAINTAINER limin
 ENV WWW_HOME /public
 EXPOSE 3000 8088
 ADD . ${WWW_HOME}

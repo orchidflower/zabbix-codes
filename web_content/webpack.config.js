@@ -1,3 +1,22 @@
+var webpack = require('webpack');
+var plugins = [];
+
+var isProduction = function () {
+  return process.env.NODE_ENV === 'production';
+};
+
+if( isProduction() ) {
+  plugins.push(
+    new webpack.optimize.UglifyJsPlugin({
+      test: /(\.jsx|\.js)$/,
+      compress: {
+        warnings: false
+      },
+    })
+  );
+}
+
+
 module.exports = {
   // 这是一个主文件包括其他模块
   entry: ['babel-polyfill', './src/main.js'],
@@ -41,6 +60,7 @@ module.exports = {
       }    
     ]
   },
+  plugins: plugins,
   vue: {
     loaders: {
       js: 'babel'
