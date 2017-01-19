@@ -44,7 +44,7 @@ exports.updateByCode = function *(code, record) {
     logger.debug('......................update by Code ' + code + '......................' );
     logger.debug(record);
     var sql='update ZABBIX_CODES set title=?, level=?, system=?, description=?, solution=?, contact=? where code=?';
-    var values = [record.title, record.level, record.system, record.description, record.solution, record.code, record.contact];
+    var values = [record.title, record.level, record.system, record.description, record.solution, record.contact, record.code];
     var rows = yield db.query(sql, values);
     logger.debug(rows);
     return rows;
