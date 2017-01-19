@@ -11,6 +11,7 @@ router.get('/', function(req, res, next) {
   res.sendFile(path.join(__dirname, "../views/index.html"));
 });
 
+// Query
 router.get('/codes/:code', wrap(function *(req, res, next) {
   var code = req.params.code;
   var rows = yield services.queryByCode(code);
@@ -20,6 +21,12 @@ router.get('/codes/:code', wrap(function *(req, res, next) {
     res.render('codes', ret);
     return;
   }
+
+  // 
+  router.get('/checking/version', function (req, res) {
+	  res.sendFile(path.join(__dirname, "../views/version.html"));
+  });
+
   
   res.render('codes', rows);
 }));
