@@ -34,7 +34,7 @@ exports.addCode = function *(record) {
     logger.debug('.....................add Code...........................');
     logger.debug(record);
     var sql = 'insert into ZABBIX_CODES (code, system, title, level, description, solution, contact) values (?, ?, ?, ?, ?, ?, ?)';
-    var values = [record.code, record.system, record.title, 0, record.description, record.solution, 'jie.li@xwf-id.com'];
+    var values = [record.code, record.system, record.title, record.level, record.description, record.solution, record.contact];
     var rows = yield db.query(sql, values);
     logger.debug(rows);
     return rows;
@@ -43,8 +43,8 @@ exports.addCode = function *(record) {
 exports.updateByCode = function *(code, record) {
     logger.debug('......................update by Code ' + code + '......................' );
     logger.debug(record);
-    var sql='update ZABBIX_CODES set title=?, system=?, description=?, solution=? where code=?';
-    var values = [record.title, record.system, record.description, record.solution, record.code];
+    var sql='update ZABBIX_CODES set title=?, level=?, system=?, description=?, solution=?, contact=? where code=?';
+    var values = [record.title, record.level, record.system, record.description, record.solution, record.code, record.contact];
     var rows = yield db.query(sql, values);
     logger.debug(rows);
     return rows;
