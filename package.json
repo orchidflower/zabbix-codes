@@ -16,11 +16,11 @@
     "jade": "~1.11.0",
     "log4js": "^1.1.0",
     "morgan": "~1.7.0",
+    "mustache-express": "^1.2.4",
     "mysql": "^2.12.0",
     "node-mysql": "^0.4.2",
     "serve-favicon": "~2.3.0",
     "swagger-jsdoc": "^1.8.4"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
