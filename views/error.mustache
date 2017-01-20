@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/grid.css">
+    <link rel="stylesheet" href="/css/grids-responsive-min.css">
+    <style>
+    	.title {
+    		text-align: center;
+    		/*font-family: Arial;*/
+    		font-size: 40px;
+    	}
+    </style>
+    	
+    </style>
+    <title>Zabbix Codes</title>
+</head>
+<body>
+<div class="pure-g" style="margin-top: 25px">
+	<div class="pure-u-1 title">
+		<p>OOPS! - Could not Find it</p>
+	</div>
+	<div class="pure-u-1 title">
+		<img src="/images/404-1.png" onclick="document.getElementById('errorMsg').style.display='block';">
+	</div>
+	<div class="pure-u-1" style="display: none" id="errorMsg">
+		<pre>{{error.stack}}</pre>
+	<div>
+</div>
+</body>

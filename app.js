@@ -26,13 +26,12 @@ app.use(log4js.connectLogger(accessLogger, {level:log4js.levels.DEBUG, format: '
 
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'jade');
 
 
 // Register '.mustache' extension with The Mustache Express
 app.engine('mustache', mustacheExpress());
-
 app.set('view engine', 'mustache');
 app.set('views', __dirname + '/views');
 
