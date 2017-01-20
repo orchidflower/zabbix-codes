@@ -10,6 +10,7 @@
     "body-parser": "~1.15.2",
     "co": "^4.6.0",
     "co-express": "^1.2.2",
+    "co-redis": "^2.1.1",
     "config": "^1.24.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.2.0",
@@ -21,6 +22,7 @@
     "mustache-express": "^1.2.4",
     "mysql": "^2.12.0",
     "node-mysql": "^0.4.2",
+    "redis": "^2.6.5",
     "serve-favicon": "~2.3.0",
     "swagger-jsdoc": "^1.8.4"
   },

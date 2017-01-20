@@ -1,5 +1,6 @@
 var db = require("./database");
 var log4js = require('log4js');
+var redis = require('./cacheservices');
 
 let logger = log4js.getLogger('services');
 
@@ -16,6 +17,12 @@ exports.listAllCodes = function *() {
 }
 
 exports.queryByCode = function *(code) {
+    var ret = yield redis.loadCode(code);
+    if (ret!=null) {
+        logger.debug("Cache is hit. ", code);
+        return ret;
+    }
+
     logger.debug('....................code = ' + code + '.................');
     var sql = `select a.id as id, code, a.system as system, b.name as systemname, a.title as title, a.level as level, 
                d.name as levelname, a.description, solution, a.contact as contact, 
@@ -25,8 +32,12 @@ exports.queryByCode = function *(code) {
                where a.system=b.system and a.contact=c.contact and a.level=d.level and code = ?`;
     var values = [code];
     var rows = yield db.query(sql, values);
-    if (rows.length>=1)
+    if (rows.length>=1) {
+        yield redis.storeCode(code, rows[0]);
+        logger.debug("Cache is stored.", code);
         return rows[0];
+    }
+
     return null;
 }
 

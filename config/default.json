@@ -9,8 +9,8 @@
 	"redis": {
 		"host": "127.0.0.1",
 		"port": "6379",
-		"user": "",
-		"password": "",
+		// "user": null,
+		// "password": null,
 		"database": "1"
 	}
 }
