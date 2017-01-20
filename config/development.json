@@ -7,10 +7,10 @@
 		"database": "zabbix_codes"
 	},
 	"redis": {
-		"host": "127.0.0.1",
+		"host": "10.1.22.25",
 		"port": "6379",
-		"user": "",
-		"password": "",
-		"database": "1"
+		// "user": "",
+		// "password": "",
+		"database": "4"
 	}
 }
