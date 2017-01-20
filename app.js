@@ -1,7 +1,7 @@
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
-var logger = require('morgan');
+// var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mustacheExpress = require('mustache-express');
@@ -24,12 +24,6 @@ var accessLogger = log4js.getLogger('access');
 // logger.setLevel('DEBUG');
 app.use(log4js.connectLogger(accessLogger, {level:log4js.levels.DEBUG, format: ':method :url :status :res[content-length] - :response-time ms'}));
 
-
-// view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'jade');
-
-
 // Register '.mustache' extension with The Mustache Express
 app.engine('mustache', mustacheExpress());
 app.set('view engine', 'mustache');
@@ -37,12 +31,12 @@ app.set('views', __dirname + '/views');
 
 // uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+// app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'node_modules')));
+// app.use(express.static(path.join(__dirname, 'node_modules')));
 
 app.use('/', index);
 app.use('/users', users);

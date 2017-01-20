@@ -34,7 +34,7 @@ init();
 
 exports.loadCode = function *(code) {
     let obj = yield redisCo.get(PREFIX_CODE+code);
-    console.log(obj);
+    // console.log(obj);
     if (!obj)
         return null;
     return JSON.parse(obj);
