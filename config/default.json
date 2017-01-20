@@ -1,0 +1,16 @@
+{
+	"mysql": {
+		"host": "127.0.0.1",
+		"port": "3306",
+		"user": "root",
+		"password": "lydsec",
+		"database": "zabbix_codes"
+	},
+	"redis": {
+		"host": "127.0.0.1",
+		"port": "6379",
+		"user": "",
+		"password": "",
+		"database": "1"
+	}
+}

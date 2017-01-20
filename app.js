@@ -18,7 +18,7 @@ var app = express();
 
 
 // initialize log4js
-log4js.configure('./config/log4js.conf.js', {reloadSecs: 300});
+log4js.configure('./config/log4js.conf.json', {reloadSecs: 300});
 // get one logger 'access' and use it to replace morgan as the express middleware for access logging
 var accessLogger = log4js.getLogger('access');
 // logger.setLevel('DEBUG');
