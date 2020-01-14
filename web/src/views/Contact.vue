@@ -22,21 +22,23 @@
             <el-table-column prop="mobile" label="手机号"></el-table-column>
             <el-table-column prop="qq" label="QQ"></el-table-column>
             <el-table-column prop="weixin" label="微信"></el-table-column>
-            <el-table-column label="操作" inline-template :context="_self" fixed="right" width="150">
-              <el-dropdown trigger="click">
-                <el-button type="primary" size="small">
-                  操作菜单<i class="el-icon-caret-bottom el-icon--right"></i>
-                </el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item><el-button type="primary" icon="information" @click="handleView(row)" >详细</el-button></el-dropdown-item>
-                  <el-dropdown-item><el-button type="primary" icon="edit" @click="handleEdit(row)">编辑</el-button></el-dropdown-item>
-                  <el-dropdown-item><el-button type="primary" icon="delete" @click="handleDelete(row)">删除</el-button></el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
+            <el-table-column label="操作" :context="_self" fixed="right" width="150">
+              <template slot-scope="scope">
+                <el-dropdown trigger="click">
+                  <el-button type="primary" size="small">
+                    操作菜单<i class="el-icon-caret-bottom el-icon--right"></i>
+                  </el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item><el-button type="primary" icon="information" @click="handleView(scope.row)" >详细</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="primary" icon="edit" @click="handleEdit(scope.row)">编辑</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="primary" icon="delete" @click="handleDelete(scope.row)">删除</el-button></el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
             </el-table-column>
         </el-table>
         <!-- 对话框 //-->
-        <el-dialog title="详细信息" v-model="ui.dialogVisible">
+        <el-dialog title="详细信息" :visible.sync="ui.dialogVisible">
           <el-form :model="editForm" :rules="editFormRules" label-width="100px" ref="editForm">
             <el-form-item label="邮箱" prop="contact">
                 <el-input v-model="editForm.contact" auto-complete="off" v-bind:readonly="contactReadonly" ref="codeInput"></el-input>
@@ -48,9 +50,9 @@
                 <el-select v-model="editForm.title" placeholder="请选择职位" filterable>
                     <el-option
                     v-for="item in allTitles"
-                    :key="item.label"
-                    :label="item.label"
-                    :value="item.value">
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.title">
                     </el-option>
                 </el-select>
             </el-form-item>
@@ -71,9 +73,9 @@
         </el-dialog>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import * as Utils from '@/utils';
+import * as Utils from '../utils';
 
 @Component
 export default class Contacts extends Vue {
@@ -86,7 +88,7 @@ export default class Contacts extends Vue {
         // 是新增记录还是编辑记录
         addRecord: false
     };
-    editForm = { title: '' };
+    editForm = { id: '', title: '', contact: '', name: '', mobile: '', qq: '', weixin: '' };
     editFormRules = {
         contact: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
         name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
@@ -116,31 +118,19 @@ export default class Contacts extends Vue {
     async loadAllContacts() {
         this.loading = true;
         console.log('*************************************');
-        this.$http.get('/api/contacts/all').then((response) => { // Success
-            console.log(response.body);
-            if (response.body.success === true) {
-                this.tableData = response.body.data;
-            }
+        let result = await Utils.doGet(this, '/api/contacts/all');
+        if (result.success) {
+            this.tableData = result.data;
             this.loading = false;
-        }, (response) => { // Failure
-
-        });
+        }
     }
 
     async loadAllTitles() {
         console.log('*************************************');
-        this.$http.get('/api/support/titles').then((response) => { // Success
-            console.log(response.body);
-            if (response.body.success === true) {
-                let allTitles = response.body.data;
-                let self = this;
-                allTitles.forEach(function(item) {
-                    self.allTitles.push({ label: item.name + '（' + item.title + '）', value: item.title });
-                });
-            }
-        }, (response) => { // Failure
-
-        });
+        let result = await Utils.doGet(this, '/api/support/titles');
+        if (result.success) {
+            this.allTitles = result.data;
+        }
     }
 
     async handleAdd() {
@@ -156,7 +146,7 @@ export default class Contacts extends Vue {
         this.editForm.weixin = '';
     }
 
-    async handleView(row) {
+    async handleView(row: any) {
         this.ui.dialogVisible = true;
         this.ui.dialogReadonly = true;
         this.ui.addRecord = false;
@@ -169,20 +159,17 @@ export default class Contacts extends Vue {
         this.editForm.weixin = row.weixin;
     }
 
-    async handleDelete(row) {
-        this.$confirm('此操作将删除当前记录，是否继续？', '请确认', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' })
-            .then(() => {
-                console.log('trying to delete');
-                this.$http.delete('/api/contacts/ids/' + row.id)
-                    .then(() => {
-                        this.$message({ type: 'info', message: '删除成功！' });
-                        this.loadAllContacts();
-                    }, () => {
-                        this.$message({ type: 'warning', message: '删除失败！' });
-                    });
-            }).catch(() => {
-                console.log('Cancel delete...');
-            });
+    async handleDelete(row: any) {
+        let confirmed = await Utils.confirm(this, '此操作将删除当前记录，是否继续？', '请确认');
+        if (confirmed) {
+            let result = await Utils.doDelete(this, '/api/contacts/ids/' + row.id);
+            if (result.success) {
+                await Utils.showSuccess('删除成功！');
+                await this.loadAllContacts();
+            } else {
+                await Utils.showError('删除失败');
+            }
+        }
     }
 
     async handleEdit(row) {
@@ -200,35 +187,34 @@ export default class Contacts extends Vue {
 
     async handleSaveOrUpdate() {
         // 0. 校验数据
-        if (this.$refs.editForm.validate((valid) => {
-            if (!valid) { // 1. 数据不符合校验规则，返回
-                return;
+        let validated = await Utils.validateForm(this.$refs.editForm);
+        if (!validated) { // 1. 数据不符合校验规则，返回
+            return;
+        }
+        // 2. 新增记录
+        if (this.ui.addRecord) {
+            let record = this.editForm;
+            console.log('Add record....', record);
+            let result = await Utils.doPost(this, '/api/contacts', record);
+            if (result.success) {
+                await Utils.showSuccess('保存成功！');
+                this.ui.dialogVisible = false;
+                this.loadAllContacts();
+            } else {
+                await Utils.showError('保存失败！');
             }
-            // 2. 新增记录
-            if (this.ui.addRecord) {
-                let record = this.editForm;
-                console.log('Add record....', record);
-                this.$http.post('/api/contacts', record)
-                    .then(() => {
-                        this.$message({ type: 'info', message: '保存成功！' });
-                        this.ui.dialogVisible = false;
-                        this.loadAllContacts();
-                    }, () => {
-                        this.$message({ type: 'warning', message: '保存失败!' });
-                    });
-            } else { // 3. 更新记录
-                console.log('Update record...');
-                let record = this.editForm;
-                this.$http.post('/api/contacts/' + record.contact, record)
-                    .then(() => {
-                        this.$message({ type: 'info', message: '保存成功！' });
-                        this.ui.dialogVisible = false;
-                        this.loadAllContacts();
-                    }, () => {
-                        this.$message({ type: 'warning', message: '保存失败!' });
-                    });
+        } else { // 3. 更新记录
+            console.log('Update record...');
+            let record = this.editForm;
+            let result = await Utils.doPost(this, '/api/contacts/' + record.contact, record);
+            if (result.success) {
+                await Utils.showSuccess('保存成功！');
+                this.ui.dialogVisible = false;
+                this.loadAllContacts();
+            } else {
+                await Utils.showError('保存失败！');
             }
-        }));
+        }
     }
 }
 </script>
