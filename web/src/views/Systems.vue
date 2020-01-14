@@ -13,9 +13,9 @@
                 <el-select v-model="queryForm.contact" placeholder="请选择联系人" :clearable="true" filterable>
                     <el-option
                     v-for="item in allContacts"
-                    :key="item.label"
-                    :label="item.label"
-                    :value="item.value">
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.contact">
                     </el-option>
                 </el-select>
             </el-form-item>
@@ -28,9 +28,9 @@
         </el-form>
 
         <el-table :data="filteredTableData" style="width: 100%" v-loading.body="loading">
-            <el-table-column prop="system" label="编码" width="80"></el-table-column>
+            <el-table-column prop="system" label="编码" width="120"></el-table-column>
             <el-table-column prop="name" label="系统名称" width="180"></el-table-column>
-            <el-table-column prop="contactname" label="联系人" width="80"></el-table-column>
+            <el-table-column prop="contactname" label="联系人" width="120"></el-table-column>
             <el-table-column prop="description" label="系统介绍"></el-table-column>
             <el-table-column label="操作" :context="_self" fixed="right" width="150">
               <template slot-scope="scope">
@@ -166,7 +166,7 @@ export default class Systems extends Vue {
       // handleQuery: function() {
 
       // },
-      async handleView(row) {
+      async handleView(row: any) {
           this.ui.dialogVisible = true;
           this.ui.dialogReadonly = true;
           this.ui.addRecord = false;
@@ -177,7 +177,7 @@ export default class Systems extends Vue {
           this.editForm.description = row.description;
       }
 
-      async handleDelete(row) {
+      async handleDelete(row: any) {
           let confirmed = await Utils.confirm(this, '此操作将删除当前记录，是否继续？', '请确认');
           if (confirmed) {
               console.log('trying to delete');
@@ -188,7 +188,7 @@ export default class Systems extends Vue {
               }
           }
       }
-      async handleEdit(row) {
+      async handleEdit(row: any) {
           this.ui.dialogVisible = true;
           this.ui.dialogReadonly = false;
           this.ui.addRecord = false;

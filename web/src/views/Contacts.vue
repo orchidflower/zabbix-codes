@@ -16,12 +16,12 @@
             </el-form-item>
         </el-form>
         <el-table :data="filteredTableData" style="width: 100%" v-loading.body="loading">
-            <el-table-column prop="name" label="联系人" width="90"></el-table-column>
+            <el-table-column prop="name" label="联系人" width="150"></el-table-column>
             <el-table-column prop="contact" label="邮箱" width="250"></el-table-column>
             <el-table-column prop="titlename" label="职位"></el-table-column>
-            <el-table-column prop="mobile" label="手机号"></el-table-column>
-            <el-table-column prop="qq" label="QQ"></el-table-column>
-            <el-table-column prop="weixin" label="微信"></el-table-column>
+            <el-table-column prop="mobile" label="手机号" width="120"></el-table-column>
+            <el-table-column prop="qq" label="QQ" width="120"></el-table-column>
+            <el-table-column prop="weixin" label="微信" width="120"></el-table-column>
             <el-table-column label="操作" :context="_self" fixed="right" width="150">
               <template slot-scope="scope">
                 <el-dropdown trigger="click">
@@ -101,7 +101,7 @@ export default class Contacts extends Vue {
         let self = this;
         let contact = this.queryForm.contact;
         if (contact === '') return self.tableData;
-        return self.tableData.filter(function(item) {
+        return self.tableData.filter(function(item: any) {
             return item.contact.indexOf(contact) !== -1;
         });
     }
@@ -172,7 +172,7 @@ export default class Contacts extends Vue {
         }
     }
 
-    async handleEdit(row) {
+    async handleEdit(row: any) {
         this.ui.dialogVisible = true;
         this.ui.dialogReadonly = false;
         this.ui.addRecord = false;
