@@ -32,22 +32,24 @@
             <el-table-column prop="name" label="系统名称" width="180"></el-table-column>
             <el-table-column prop="contactname" label="联系人" width="80"></el-table-column>
             <el-table-column prop="description" label="系统介绍"></el-table-column>
-            <el-table-column label="操作" inline-template :context="_self" fixed="right" width="150">
-              <el-dropdown trigger="click">
-                <el-button type="primary" size="small">
-                  操作菜单<i class="el-icon-caret-bottom el-icon--right"></i>
-                </el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item><el-button type="primary" icon="information" @click="handleView(row)" >详细</el-button></el-dropdown-item>
-                  <el-dropdown-item><el-button type="primary" icon="edit" @click="handleEdit(row)">编辑</el-button></el-dropdown-item>
-                  <el-dropdown-item><el-button type="primary" icon="delete" @click="handleDelete(row)">删除</el-button></el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
+            <el-table-column label="操作" :context="_self" fixed="right" width="150">
+              <template slot-scope="scope">
+                <el-dropdown trigger="click">
+                  <el-button type="primary" size="small">
+                    操作菜单<i class="el-icon-caret-bottom el-icon--right"></i>
+                  </el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item><el-button type="primary" icon="information" @click="handleView(scope.row)" >详细</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="primary" icon="edit" @click="handleEdit(scope.row)">编辑</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="primary" icon="delete" @click="handleDelete(scope.row)">删除</el-button></el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
             </el-table-column>
         </el-table>
 
         <!-- 对话框 //-->
-        <el-dialog title="详细信息" v-model="ui.dialogVisible">
+        <el-dialog title="详细信息" :visible.sync="ui.dialogVisible">
           <el-form :model="editForm" :rules="editFormRules" label-width="100px" ref="editForm">
             <el-form-item label="系统代码" prop="system">
           <el-input v-model="editForm.system" auto-complete="off" v-bind:readonly="systemReadonly" ref="codeInput"></el-input>
@@ -60,9 +62,9 @@
                 <el-select v-model="editForm.contact" placeholder="请选择联系人" filterable>
                     <el-option
                     v-for="item in allContacts"
-                    :key="item.label"
-                    :label="item.label"
-                    :value="item.value">
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.contact">
                     </el-option>
                 </el-select>
             </el-form-item>
@@ -77,9 +79,9 @@
         </el-dialog>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import * as Utils from '@/utils';
+import * as Utils from '../utils';
 
 @Component
 export default class Systems extends Vue {
@@ -92,7 +94,7 @@ export default class Systems extends Vue {
           // 是新增记录还是编辑记录
           addRecord: false
       };
-      editForm = { contact: '' };
+      editForm = { id: '', contact: '', system: '', name: '', description: '' };
       editFormRules = {
           system: [{ required: true, message: '请输入系统代码', trigger: 'blur' }],
           name: [{ required: true, message: '请输入系统名称', trigger: 'blur' }],
@@ -107,19 +109,24 @@ export default class Systems extends Vue {
           let self = this;
           let system = this.queryForm.system;
           let contact = this.queryForm.contact;
-          if (system === '' && contact === '') return self.tableData;
+          if (system === '' && contact === '') {
+              return self.tableData;
+          }
           if (system === '') {
-              return self.tableData.filter(function(item) {
+              return self.tableData.filter(function(item: any) {
                   return item.contact === contact;
               });
           }
           if (contact === '') {
-              return item.system.indexOf(system) !== -1;
+              return self.tableData.filter(function(item: any) {
+                  return item.system.indexOf(system) !== -1;
+              });
           }
-          return self.tableData.filter(function(item) {
+          return self.tableData.filter(function(item: any) {
               return item.system.indexOf(system) !== -1 && item.contact === contact;
           });
       }
+
       get systemReadonly() {
           return !this.ui.addRecord;
       }
@@ -130,30 +137,19 @@ export default class Systems extends Vue {
       }
 
       async loadAllContacts() {
-          this.$http.get('/api/contacts/all').then((response) => { // Success
-              // console.log(response.body);
-              if (response.body.success === true) {
-                  let data = response.body.data;
-                  this.allContacts = [];
-                  let _this = this;
-                  data.forEach(function(item) {
-                      _this.allContacts.push({ label: item.name + '（' + item.contact + '）', value: item.contact });
-                  });
-              }
-          }, (response) => { // Failure
-          });
+          let result = await Utils.doGet(this, '/api/contacts/all');
+          if (result.success) {
+              this.allContacts = result.data;
+          }
       }
       async loadAllSystems() {
           console.log('*************************************');
           this.loading = true;
-          this.$http.get('/api/systems/all').then((response) => { // Success
-              console.log(response.body);
-              if (response.body.success === true) {
-                  this.tableData = response.body.data;
-                  this.loading = false;
-              }
-          }, (response) => { // Failure
-          });
+          let result = await Utils.doGet(this, '/api/systems/all');
+          if (result.success) {
+              this.tableData = result.data;
+              this.loading = false;
+          }
       }
 
       async handleAdd() {
@@ -182,19 +178,15 @@ export default class Systems extends Vue {
       }
 
       async handleDelete(row) {
-          this.$confirm('此操作将删除当前记录，是否继续？', '请确认', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' })
-              .then(() => {
-                  console.log('trying to delete');
-                  this.$http.delete('/api/systems/ids/' + row.id)
-                      .then(() => {
-                          this.$message({ type: 'info', message: '删除成功！' });
-                          this.loadAllSystems();
-                      }, () => {
-                          this.$message({ type: 'warning', message: '删除失败！' });
-                      });
-              }).catch(() => {
-                  console.log('Cancel delete...');
-              });
+          let confirmed = await Utils.confirm(this, '此操作将删除当前记录，是否继续？', '请确认');
+          if (confirmed) {
+              console.log('trying to delete');
+              let result = await Utils.doDelete(this, '/api/systems/ids/' + row.id);
+              if (result.success) {
+                  await Utils.showSuccess('删除成功！');
+                  await this.loadAllSystems();
+              }
+          }
       }
       async handleEdit(row) {
           this.ui.dialogVisible = true;
@@ -208,35 +200,34 @@ export default class Systems extends Vue {
       }
       async handleSaveOrUpdate() {
           // 0. 校验数据
-          if (this.$refs.editForm.validate((valid) => {
-              if (!valid) { // 1. 数据不符合校验规则，返回
-                  return;
+          let validated = await Utils.validateForm(this.$refs.editForm);
+          if (!validated) { // 1. 数据不符合校验规则，返回
+              return;
+          }
+          // 2. 新增记录
+          if (this.ui.addRecord) {
+              let record = this.editForm;
+              console.log('Add record....', record);
+              let result = await Utils.doPost(this, '/api/systems', record);
+              if (result.success) {
+                  this.ui.dialogVisible = false;
+                  await Utils.showSuccess('保存成功！');
+                  await this.loadAllSystems();
+              } else {
+                  await Utils.showError('保存失败！');
               }
-              // 2. 新增记录
-              if (this.ui.addRecord) {
-                  let record = this.editForm;
-                  console.log('Add record....', record);
-                  this.$http.post('/api/systems', record)
-                      .then(() => {
-                          this.$message({ type: 'info', message: '保存成功！' });
-                          this.ui.dialogVisible = false;
-                          this.loadAllSystems();
-                      }, () => {
-                          this.$message({ type: 'warning', message: '保存失败!' });
-                      });
-              } else { // 3. 更新记录
-                  console.log('Update record...');
-                  let record = this.editForm;
-                  this.$http.post('/api/systems/' + record.system, record)
-                      .then(() => {
-                          this.$message({ type: 'info', message: '保存成功！' });
-                          this.ui.dialogVisible = false;
-                          this.loadAllSystems();
-                      }, () => {
-                          this.$message({ type: 'warning', message: '保存失败!' });
-                      });
+          } else { // 3. 更新记录
+              console.log('Update record...');
+              let record = this.editForm;
+              let result = await Utils.doPost(this, '/api/system/' + record.system, record);
+              if (result.success) {
+                  await Utils.showSuccess('保存成功！');
+                  this.ui.dialogVisible = false;
+                  this.loadAllSystems();
+              } else {
+                  await Utils.showError('保存失败！');
               }
-          }));
+          }
       }
 };
 </script>
