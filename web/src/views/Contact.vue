@@ -72,160 +72,163 @@
     </div>
 </template>
 <script>
-export default {
-    data() {
-        return {
-            allTitles: [],
-            ui: {
-                // 对话框是否可见
-                dialogVisible: false,
-                // 对话框的内容是否允许编辑
-                dialogReadonly: true,
-                // 是新增记录还是编辑记录
-                addRecord: false
-            },
-            editForm: { title: '' },
-            editFormRules: {
-                contact: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
-                name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
-                title: [{ required: true, message: '请选择职位', trigger: 'blur' }]
-            },
-            queryForm: { contact: '' },
-            tableData: [],
-            loading: false
-        };
-    },
-    computed: {
-        filteredTableData: function() {
-            let self = this;
-            let contact = this.queryForm.contact;
-            if (contact === '') return self.tableData;
-            return self.tableData.filter(function(item) {
-                return item.contact.indexOf(contact) !== -1;
-            });
-        },
-        contactReadonly: function() {
-            return !this.ui.addRecord;
-        }
-    },
-    mounted: function() {
+import { Vue, Component } from 'vue-property-decorator';
+import * as Utils from '@/utils';
+
+@Component
+export default class Contacts extends Vue {
+    allTitles = [];
+    ui = {
+        // 对话框是否可见
+        dialogVisible: false,
+        // 对话框的内容是否允许编辑
+        dialogReadonly: true,
+        // 是新增记录还是编辑记录
+        addRecord: false
+    };
+    editForm = { title: '' };
+    editFormRules = {
+        contact: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
+        name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
+        title: [{ required: true, message: '请选择职位', trigger: 'blur' }]
+    };
+    queryForm = { contact: '' };
+    tableData = [];
+    loading = false;
+    get filteredTableData() {
+        let self = this;
+        let contact = this.queryForm.contact;
+        if (contact === '') return self.tableData;
+        return self.tableData.filter(function(item) {
+            return item.contact.indexOf(contact) !== -1;
+        });
+    }
+
+    get contactReadonly() {
+        return !this.ui.addRecord;
+    }
+
+    async mounted() {
         this.loadAllContacts();
         this.loadAllTitles();
-    },
-    methods: {
-        loadAllContacts: function() {
-            this.loading = true;
-            console.log('*************************************');
-            this.$http.get('/api/contacts/all').then((response) => { // Success
-                console.log(response.body);
-                if (response.body.success === true) {
-                    this.tableData = response.body.data;
-                }
-                this.loading = false;
-            }, (response) => { // Failure
-
-            });
-        },
-        loadAllTitles: function() {
-            console.log('*************************************');
-            this.$http.get('/api/support/titles').then((response) => { // Success
-                console.log(response.body);
-                if (response.body.success === true) {
-                    let allTitles = response.body.data;
-                    let self = this;
-                    allTitles.forEach(function(item) {
-                        self.allTitles.push({ label: item.name + '（' + item.title + '）', value: item.title });
-                    });
-                }
-            }, (response) => { // Failure
-
-            });
-        },
-        handleAdd: function() {
-            this.ui.dialogVisible = true;
-            this.ui.dialogReadonly = false;
-            this.ui.addRecord = true;
-            this.editForm.id = '';
-            this.editForm.contact = '';
-            this.editForm.name = '';
-            this.editForm.title = '';
-            this.editForm.mobile = '';
-            this.editForm.qq = '';
-            this.editForm.weixin = '';
-        },
-        // handleQuery: function() {
-        // },
-        handleView: function(row) {
-            this.ui.dialogVisible = true;
-            this.ui.dialogReadonly = true;
-            this.ui.addRecord = false;
-            this.editForm.id = row.id;
-            this.editForm.contact = row.contact;
-            this.editForm.name = row.name;
-            this.editForm.title = row.title;
-            this.editForm.mobile = row.mobile;
-            this.editForm.qq = row.qq;
-            this.editForm.weixin = row.weixin;
-        },
-        handleDelete: function(row) {
-            this.$confirm('此操作将删除当前记录，是否继续？', '请确认', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' })
-                .then(() => {
-                    console.log('trying to delete');
-                    this.$http.delete('/api/contacts/ids/' + row.id)
-                        .then(() => {
-                            this.$message({ type: 'info', message: '删除成功！' });
-                            this.loadAllContacts();
-                        }, () => {
-                            this.$message({ type: 'warning', message: '删除失败！' });
-                        });
-                }).catch(() => {
-                    console.log('Cancel delete...');
-                });
-        },
-        handleEdit: function(row) {
-            this.ui.dialogVisible = true;
-            this.ui.dialogReadonly = false;
-            this.ui.addRecord = false;
-            this.editForm.id = row.id;
-            this.editForm.contact = row.contact;
-            this.editForm.name = row.name;
-            this.editForm.title = row.title;
-            this.editForm.mobile = row.mobile;
-            this.editForm.qq = row.qq;
-            this.editForm.weixin = row.weixin;
-        },
-        handleSaveOrUpdate: function() {
-            // 0. 校验数据
-            if (this.$refs.editForm.validate((valid) => {
-                if (!valid) { // 1. 数据不符合校验规则，返回
-                    return;
-                }
-                // 2. 新增记录
-                if (this.ui.addRecord) {
-                    let record = this.editForm;
-                    console.log('Add record....', record);
-                    this.$http.post('/api/contacts', record)
-                        .then(() => {
-                            this.$message({ type: 'info', message: '保存成功！' });
-                            this.ui.dialogVisible = false;
-                            this.loadAllContacts();
-                        }, () => {
-                            this.$message({ type: 'warning', message: '保存失败!' });
-                        });
-                } else { // 3. 更新记录
-                    console.log('Update record...');
-                    let record = this.editForm;
-                    this.$http.post('/api/contacts/' + record.contact, record)
-                        .then(() => {
-                            this.$message({ type: 'info', message: '保存成功！' });
-                            this.ui.dialogVisible = false;
-                            this.loadAllContacts();
-                        }, () => {
-                            this.$message({ type: 'warning', message: '保存失败!' });
-                        });
-                }
-            }));
-        }
     }
-};
+
+    async loadAllContacts() {
+        this.loading = true;
+        console.log('*************************************');
+        this.$http.get('/api/contacts/all').then((response) => { // Success
+            console.log(response.body);
+            if (response.body.success === true) {
+                this.tableData = response.body.data;
+            }
+            this.loading = false;
+        }, (response) => { // Failure
+
+        });
+    }
+
+    async loadAllTitles() {
+        console.log('*************************************');
+        this.$http.get('/api/support/titles').then((response) => { // Success
+            console.log(response.body);
+            if (response.body.success === true) {
+                let allTitles = response.body.data;
+                let self = this;
+                allTitles.forEach(function(item) {
+                    self.allTitles.push({ label: item.name + '（' + item.title + '）', value: item.title });
+                });
+            }
+        }, (response) => { // Failure
+
+        });
+    }
+
+    async handleAdd() {
+        this.ui.dialogVisible = true;
+        this.ui.dialogReadonly = false;
+        this.ui.addRecord = true;
+        this.editForm.id = '';
+        this.editForm.contact = '';
+        this.editForm.name = '';
+        this.editForm.title = '';
+        this.editForm.mobile = '';
+        this.editForm.qq = '';
+        this.editForm.weixin = '';
+    }
+
+    async handleView(row) {
+        this.ui.dialogVisible = true;
+        this.ui.dialogReadonly = true;
+        this.ui.addRecord = false;
+        this.editForm.id = row.id;
+        this.editForm.contact = row.contact;
+        this.editForm.name = row.name;
+        this.editForm.title = row.title;
+        this.editForm.mobile = row.mobile;
+        this.editForm.qq = row.qq;
+        this.editForm.weixin = row.weixin;
+    }
+
+    async handleDelete(row) {
+        this.$confirm('此操作将删除当前记录，是否继续？', '请确认', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' })
+            .then(() => {
+                console.log('trying to delete');
+                this.$http.delete('/api/contacts/ids/' + row.id)
+                    .then(() => {
+                        this.$message({ type: 'info', message: '删除成功！' });
+                        this.loadAllContacts();
+                    }, () => {
+                        this.$message({ type: 'warning', message: '删除失败！' });
+                    });
+            }).catch(() => {
+                console.log('Cancel delete...');
+            });
+    }
+
+    async handleEdit(row) {
+        this.ui.dialogVisible = true;
+        this.ui.dialogReadonly = false;
+        this.ui.addRecord = false;
+        this.editForm.id = row.id;
+        this.editForm.contact = row.contact;
+        this.editForm.name = row.name;
+        this.editForm.title = row.title;
+        this.editForm.mobile = row.mobile;
+        this.editForm.qq = row.qq;
+        this.editForm.weixin = row.weixin;
+    }
+
+    async handleSaveOrUpdate() {
+        // 0. 校验数据
+        if (this.$refs.editForm.validate((valid) => {
+            if (!valid) { // 1. 数据不符合校验规则，返回
+                return;
+            }
+            // 2. 新增记录
+            if (this.ui.addRecord) {
+                let record = this.editForm;
+                console.log('Add record....', record);
+                this.$http.post('/api/contacts', record)
+                    .then(() => {
+                        this.$message({ type: 'info', message: '保存成功！' });
+                        this.ui.dialogVisible = false;
+                        this.loadAllContacts();
+                    }, () => {
+                        this.$message({ type: 'warning', message: '保存失败!' });
+                    });
+            } else { // 3. 更新记录
+                console.log('Update record...');
+                let record = this.editForm;
+                this.$http.post('/api/contacts/' + record.contact, record)
+                    .then(() => {
+                        this.$message({ type: 'info', message: '保存成功！' });
+                        this.ui.dialogVisible = false;
+                        this.loadAllContacts();
+                    }, () => {
+                        this.$message({ type: 'warning', message: '保存失败!' });
+                    });
+            }
+        }));
+    }
+}
 </script>

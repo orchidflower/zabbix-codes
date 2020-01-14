@@ -66,7 +66,7 @@ export async function axiosAction(context: any, method: string, url: string, dat
         }];
         let result: any = await Axios.request(config);
 
-        if (!result.data || !result.data.code) {
+        if (!result.data) { // || !result.data.code
             return new Promise((resolve) => {
                 resolve({ success: false, message: '执行HTTP请求失败。返回信息不正确。' });
             });

@@ -69,7 +69,9 @@
 </template>
 
 <script>
-import Vue from 'vue';
+import { Vue, Component } from 'vue-property-decorator';
+import * as Utils from '@/utils';
+
 import Icon from 'vue-awesome/components/Icon.vue';
 import 'vue-awesome/icons';
 // import 'vue-awesome/icons/qq'
@@ -77,43 +79,37 @@ import 'vue-awesome/icons';
 // import 'vue-awesome/icons/weixin'
 Vue.component('Icon', Icon);
 
-export default {
-    mounted: function() {
-        this.getCodeDetails();
-    },
-    watch: {
-        // 如果路由有变化，会再次执行该方法
-        '$route': 'getCodeDetails'
-    },
-    data() {
-        return {
-            code: {
-                code: '',
-                system: '',
-                description: '',
-                solution: ''
-            }
-        };
-    },
-    methods: {
-        getCodeDetails: function() {
-            console.log(this.$route.params.code);
-            console.log('Hello..........................');
+@Component
+export default class Codes extends Vue {
+    code = {
+        code: '',
+        system: '',
+        description: '',
+        solution: ''
+    };
 
-            this.$http.get('/api/codes/' + this.$route.params.code).then((response) => {
-                console.log(response.body);
-                if (response.body.success) { // success callback
-                    console.log(response.body.data);
-                    this.code = response.body.data;
-                } else {
-                    var ret = {};
-                    ret.code = 'ERR';
-                    ret.system = 'ERR';
-                    ret.description = response.body.message;
-                    this.code = ret;
-                }
-            }, (response) => {
-            });
+    async mounted() {
+        this.getCodeDetails();
+    };
+
+    // watch: {
+    //     // 如果路由有变化，会再次执行该方法
+    //     '$route': 'getCodeDetails'
+    // },
+    async getCodeDetails() {
+        console.log(this.$route.params.code);
+        console.log('Hello..........................');
+
+        let result = await Utils.doGet('/api/codes/' + this.$route.params.code);
+        if (result.success) {
+            console.log(result.data);
+            this.code = result.data;
+        } else {
+            var ret = {};
+            ret.code = 'ERR';
+            ret.system = 'ERR';
+            ret.description = response.body.message;
+            this.code = ret;
         }
     }
 };

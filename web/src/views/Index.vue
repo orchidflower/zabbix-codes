@@ -11,9 +11,9 @@
                 <el-select v-model="queryForm.system" placeholder="所属系统" :clearable="true" filterable>
                     <el-option
                     v-for="item in allSystems"
-                    :key="item.label"
-                    :label="item.label"
-                    :value="item.value">
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.system">
                     </el-option>
                 </el-select>
             </el-form-item>
@@ -22,6 +22,9 @@
             </el-form-item>
             <el-form-item align="right">
                 <el-button type="primary" @click="handleAdd">新增</el-button>
+            </el-form-item>
+            <el-form-item align="right">
+                <el-button type="primary" @click="handleSearch">查询</el-button>
             </el-form-item>
         </el-form>
 
@@ -33,23 +36,25 @@
             <!--<el-table-column prop="description" label="详细信息"></el-table-column>
             <el-table-column prop="solution" label="解决办法"></el-table-column>-->
             <el-table-column prop="contactname" label="联系人" width="100"></el-table-column>
-            <el-table-column label="操作" inline-template :context="_self" fixed="right" width="150">
-              <el-dropdown trigger="click">
-                <el-button type="primary" size="small">
-                  操作菜单<i class="el-icon-caret-bottom el-icon--right"></i>
-                </el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item><el-button type="primary" icon="information" @click="handleView(row)" >详细</el-button></el-dropdown-item>
-                  <el-dropdown-item><el-button type="primary" icon="edit" @click="handleEdit(row)">编辑</el-button></el-dropdown-item>
-                  <el-dropdown-item><el-button type="primary" icon="delete" @click="handleDelete(row)">删除</el-button></el-dropdown-item>
-                  <el-dropdown-item><el-button type="primary" icon="more" @click="handleRedirect(row)">更多</el-button></el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
+            <el-table-column label="操作" :context="_self" fixed="right" width="150">
+              <template slot-scope="scope">
+                <el-dropdown trigger="click">
+                  <el-button type="primary" size="small">
+                    操作菜单<i class="el-icon-caret-bottom el-icon--right"></i>
+                  </el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item><el-button type="primary" icon="information" @click="handleView(scope.row)" >详细</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="primary" icon="edit" @click="handleEdit(scope.row)">编辑</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="primary" icon="delete" @click="handleDelete(scope.row)">删除</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="primary" icon="more" @click="handleRedirect(scope.row)">更多</el-button></el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
             </el-table-column>
         </el-table>
 
         <!-- 对话框 //-->
-        <el-dialog title="详细信息" v-model="ui.dialogVisible">
+        <el-dialog title="详细信息" :visible.sync="ui.dialogVisible">
           <el-form :model="editForm" :rules="editFormRules" label-width="100px" ref="editForm">
             <el-form-item label="错误码" prop="code">
               <el-input v-model="editForm.code" auto-complete="off" v-bind:readonly="codeReadonly" ref="codeInput"></el-input>
@@ -58,9 +63,9 @@
                 <el-select v-model="editForm.system" placeholder="请选择系统" filterable>
                     <el-option
                     v-for="item in allSystems"
-                    :key="item.label"
-                    :label="item.label"
-                    :value="item.value">
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.system">
                     </el-option>
                 </el-select>
             </el-form-item>
@@ -68,9 +73,9 @@
                 <el-select v-model="editForm.level" placeholder="请选择报警级别" filterable>
                     <el-option
                     v-for="item in allLevels"
-                    :key="item.label"
-                    :label="item.label"
-                    :value="item.value">
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.level">
                     </el-option>
                 </el-select>
             </el-form-item>
@@ -87,9 +92,9 @@
                 <el-select v-model="editForm.contact" placeholder="请选择联系人" filterable>
                     <el-option
                     v-for="item in allContacts"
-                    :key="item.label"
-                    :label="item.label"
-                    :value="item.value">
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.contact">
                     </el-option>
                 </el-select>
             </el-form-item>
@@ -101,9 +106,9 @@
         </el-dialog>
     </div>
 </template>
-<script>
+<script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import * as Utils from '@/utils';
+import * as Utils from '../utils';
 
 @Component
 export default class Index extends Vue {
@@ -118,7 +123,7 @@ export default class Index extends Vue {
       // 是新增记录还是编辑记录
       addRecord: false
   };
-  editForm = { system: '', level: '', contact: '' };
+  editForm = { id: '', code: '', system: '', level: '', contact: '', title: '', description: '', solution: '' };
   editFormRules = {
       code: [{ required: true, message: '请输入错误码', trigger: 'blur' }],
       system: [{ required: true, message: '请选择所属系统', trigger: 'blur' }],
@@ -128,7 +133,7 @@ export default class Index extends Vue {
       solution: [{ required: true, message: '请输入解决办法', trigger: 'blur' }],
       contact: [{ required: true, message: '请选择联系人', trigger: 'blur' }]
   };
-  queryForm = { code: '', system: 'SYS' };
+  queryForm = { code: '', system: 'PSS-ADMIN' };
   tableData = [];
   loading = false;
 
@@ -157,75 +162,46 @@ export default class Index extends Vue {
   }
 
   async mounted() {
-      this.loadAllCodes();
-      this.loadAllSystems();
-      this.loadAllLevels();
-      this.loadAllContacts();
+      await this.loadAllCodes();
+      await this.loadAllSystems();
+      await this.loadAllLevels();
+      await this.loadAllContacts();
   }
 
   async loadAllSystems() {
-      let result = await Utils.doGet('/api/systems/all');
+      let result = await Utils.doGet(this, '/api/systems/all');
       if (result.success) {
-
+          this.allSystems = result.data;
+          console.log(this.allSystems);
       }
-      this.$http.get('/api/systems/all').then((response) => { // Success
-          if (response.body.success === true) {
-              let data = response.body.data;
-              let _this = this;
-              this.allSystems = [];
-              data.forEach(function(item) {
-                  _this.allSystems.push({ label: item.name + '（' + item.system + '）', value: item.system });
-              });
-              _this.filteredAllSystems = _this.allSystems;
-          }
-      }, (response) => { // Failure
-
-      });
   }
 
   async loadAllContacts() {
-      this.$http.get('/api/contacts/all').then((response) => { // Success
-          // console.log(response.body);
-          if (response.body.success === true) {
-              let data = response.body.data;
-              this.allContacts = [];
-              let _this = this;
-              data.forEach(function(item) {
-                  _this.allContacts.push({ label: item.name + '（' + item.contact + '）', value: item.contact });
-              });
-          }
-      }, (response) => { // Failure
-      });
+      let result = await Utils.doGet(this, '/api/contacts/all');
+      if (result.success) {
+          this.allContacts = result.data;
+      }
+  }
+
+  async handleSearch() {
+      await this.loadAllCodes();
   }
 
   async loadAllLevels() {
-      this.$http.get('/api/support/levels').then((response) => { // Success
-          if (response.body.success === true) {
-              let data = response.body.data;
-              let self = this;
-              this.allLevels = [];
-              data.forEach(function(item) {
-                  self.allLevels.push({ label: item.name + '（' + item.level + '）', value: item.level });
-              });
-          }
-      }, (response) => { // Failure
-
-      });
+      let result = await Utils.doGet(this, '/api/support/levels');
+      if (result.success) {
+          this.allLevels = result.data;
+      }
   }
 
   async loadAllCodes() {
-      this.loading = true;
-      this.$http.get('/api/codes/all').then((response) => { // Success
-          if (response.body.success === true) {
-              this.tableData = response.body.data;
-          }
-          this.loading = false;
-      }, (response) => { // Failure
-
-      });
+      let result = await Utils.doGet(this, '/api/codes/all');
+      if (result.success) {
+          this.tableData = result.data;
+      }
   }
 
-  async handleView(row) {
+  async handleView(row: any) {
       this.ui.dialogVisible = true;
       this.ui.dialogReadonly = true;
       this.ui.addRecord = false;
@@ -269,18 +245,15 @@ export default class Index extends Vue {
   }
 
   async handleDelete(row) {
-      this.$confirm('此操作将删除当前记录，是否继续？', '请确认', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' })
-          .then(() => {
-              this.$http.delete('/api/codes/ids/' + row.id)
-                  .then(() => {
-                      this.$message({ type: 'info', message: '删除成功！' });
-                      this.loadAllCodes();
-                  }, () => {
-                      this.$message({ type: 'warning', message: '删除失败！' });
-                  });
-          }).catch(() => {
-              console.log('Cancel delete...');
-          });
+      let confirmed = await Utils.confirm(this, '此操作将删除当前记录，是否继续？', '请确认');
+      if (confirmed) {
+          let result = await Utils.doDelete(this, '/api/codes/ids/' + row.id);
+          if (result.success) {
+              await Utils.showSuccess('删除成功');
+          } else {
+              await Utils.showSuccess('删除失败成功');
+          }
+      }
   }
 
   async handleRedirect(row) {
@@ -290,33 +263,32 @@ export default class Index extends Vue {
 
   async handleSaveOrUpdate() {
       // 0. 校验数据
-      if (this.$refs.editForm.validate((valid) => {
-          if (!valid) { // 1. 数据不符合校验规则，返回
-              return;
+      let validated = await Utils.validateForm(this.$refs.editForm);
+      if (!validated) {
+          return;
+      }
+      // 2. 新增记录
+      if (this.ui.addRecord) {
+          let record = this.editForm;
+          let result = await Utils.doPost(this, '/api/codes', record);
+          if (result.success) {
+              await Utils.showSuccess('保存成功');
+              this.ui.dialogVisible = false;
+              await this.loadAllCodes();
+          } else {
+              Utils.showError('保存失败');
           }
-          // 2. 新增记录
-          if (this.ui.addRecord) {
-              let record = this.editForm;
-              this.$http.post('/api/codes', record)
-                  .then(() => {
-                      this.$message({ type: 'info', message: '保存成功！' });
-                      this.ui.dialogVisible = false;
-                      this.loadAllCodes();
-                  }, () => {
-                      this.$message({ type: 'warning', message: '保存失败!' });
-                  });
-          } else { // 3. 更新记录
-              let record = this.editForm;
-              this.$http.post('/api/codes/' + record.code, record)
-                  .then(() => {
-                      this.$message({ type: 'info', message: '保存成功！' });
-                      this.ui.dialogVisible = false;
-                      this.loadAllCodes();
-                  }, () => {
-                      this.$message({ type: 'warning', message: '保存失败!' });
-                  });
+      } else { // 3. 更新记录
+          let record = this.editForm;
+          let result = await Utils.doPost(this, '/api/codes/' + record.code, record);
+          if (result.success) {
+              await Utils.showSuccess('保存成功');
+              this.ui.dialogVisible = false;
+              await this.loadAllCodes();
+          } else {
+              Utils.showError('保存失败');
           }
-      }));
+      }
   }
 };
 </script>

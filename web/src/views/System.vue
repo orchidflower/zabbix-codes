@@ -78,164 +78,165 @@
     </div>
 </template>
 <script>
-export default {
-    data() {
-        return {
-            allContacts: [],
-            ui: {
-                // 对话框是否可见
-                dialogVisible: false,
-                // 对话框的内容是否允许编辑
-                dialogReadonly: true,
-                // 是新增记录还是编辑记录
-                addRecord: false
-            },
-            editForm: { contact: '' },
-            editFormRules: {
-                system: [{ required: true, message: '请输入系统代码', trigger: 'blur' }],
-                name: [{ required: true, message: '请输入系统名称', trigger: 'blur' }],
-                description: [{ required: true, message: '请输入详细介绍', trigger: 'blur' }],
-                contact: [{ required: true, message: '请选择联系人', trigger: 'blur' }]
-            },
-            queryForm: { system: '', contact: '' },
-            tableData: [],
-            loading: true
-        };
-    },
-    computed: {
-        filteredTableData: function() {
-            let self = this;
-            let system = this.queryForm.system;
-            let contact = this.queryForm.contact;
-            if (system === '' && contact === '') return self.tableData;
-            if (system === '') {
-                return self.tableData.filter(function(item) {
-                    return item.contact === contact;
-                });
-            }
-            if (contact === '') {
-                return item.system.indexOf(system) !== -1;
-            }
-            return self.tableData.filter(function(item) {
-                return item.system.indexOf(system) !== -1 && item.contact === contact;
-            });
-        },
-        systemReadonly: function() {
-            return !this.ui.addRecord;
-        }
-    },
-    mounted: function() {
-        this.loadAllSystems();
-        this.loadAllContacts();
-    },
-    methods: {
-        loadAllContacts: function() {
-            this.$http.get('/api/contacts/all').then((response) => { // Success
-                // console.log(response.body);
-                if (response.body.success === true) {
-                    let data = response.body.data;
-                    this.allContacts = [];
-                    let _this = this;
-                    data.forEach(function(item) {
-                        _this.allContacts.push({ label: item.name + '（' + item.contact + '）', value: item.contact });
-                    });
-                }
-            }, (response) => { // Failure
-            });
-        },
-        loadAllSystems: function() {
-            console.log('*************************************');
-            this.loading = true;
-            this.$http.get('/api/systems/all').then((response) => { // Success
-                console.log(response.body);
-                if (response.body.success === true) {
-                    this.tableData = response.body.data;
-                    this.loading = false;
-                }
-            }, (response) => { // Failure
-            });
-        },
-        handleAdd: function() {
-            //   this.loadAllContacts();
-            this.ui.dialogVisible = true;
-            this.ui.dialogReadonly = false;
-            this.ui.addRecord = true;
-            this.editForm.id = '';
-            this.editForm.system = '';
-            this.editForm.name = '';
-            this.editForm.contact = '';
-            this.editForm.description = '';
-        },
-        // handleQuery: function() {
+import { Vue, Component } from 'vue-property-decorator';
+import * as Utils from '@/utils';
 
-        // },
-        handleView: function(row) {
-            this.ui.dialogVisible = true;
-            this.ui.dialogReadonly = true;
-            this.ui.addRecord = false;
-            this.editForm.id = row.id;
-            this.editForm.system = row.system;
-            this.editForm.name = row.name;
-            this.editForm.contact = row.contact;
-            this.editForm.description = row.description;
-        },
-        handleDelete: function(row) {
-            this.$confirm('此操作将删除当前记录，是否继续？', '请确认', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' })
-                .then(() => {
-                    console.log('trying to delete');
-                    this.$http.delete('/api/systems/ids/' + row.id)
-                        .then(() => {
-                            this.$message({ type: 'info', message: '删除成功！' });
-                            this.loadAllSystems();
-                        }, () => {
-                            this.$message({ type: 'warning', message: '删除失败！' });
-                        });
-                }).catch(() => {
-                    console.log('Cancel delete...');
-                });
-        },
-        handleEdit: function(row) {
-            this.ui.dialogVisible = true;
-            this.ui.dialogReadonly = false;
-            this.ui.addRecord = false;
-            this.editForm.id = row.id;
-            this.editForm.system = row.system;
-            this.editForm.name = row.name;
-            this.editForm.contact = row.contact;
-            this.editForm.description = row.description;
-        },
-        handleSaveOrUpdate: function() {
-            // 0. 校验数据
-            if (this.$refs.editForm.validate((valid) => {
-                if (!valid) { // 1. 数据不符合校验规则，返回
-                    return;
-                }
-                // 2. 新增记录
-                if (this.ui.addRecord) {
-                    let record = this.editForm;
-                    console.log('Add record....', record);
-                    this.$http.post('/api/systems', record)
-                        .then(() => {
-                            this.$message({ type: 'info', message: '保存成功！' });
-                            this.ui.dialogVisible = false;
-                            this.loadAllSystems();
-                        }, () => {
-                            this.$message({ type: 'warning', message: '保存失败!' });
-                        });
-                } else { // 3. 更新记录
-                    console.log('Update record...');
-                    let record = this.editForm;
-                    this.$http.post('/api/systems/' + record.system, record)
-                        .then(() => {
-                            this.$message({ type: 'info', message: '保存成功！' });
-                            this.ui.dialogVisible = false;
-                            this.loadAllSystems();
-                        }, () => {
-                            this.$message({ type: 'warning', message: '保存失败!' });
-                        });
-                }
-            }));
-        }
-    }
+@Component
+export default class Systems extends Vue {
+      allContacts = [];
+      ui = {
+          // 对话框是否可见
+          dialogVisible: false,
+          // 对话框的内容是否允许编辑
+          dialogReadonly: true,
+          // 是新增记录还是编辑记录
+          addRecord: false
+      };
+      editForm = { contact: '' };
+      editFormRules = {
+          system: [{ required: true, message: '请输入系统代码', trigger: 'blur' }],
+          name: [{ required: true, message: '请输入系统名称', trigger: 'blur' }],
+          description: [{ required: true, message: '请输入详细介绍', trigger: 'blur' }],
+          contact: [{ required: true, message: '请选择联系人', trigger: 'blur' }]
+      };
+      queryForm = { system: '', contact: '' };
+      tableData = [];
+      loading = true
+
+      get filteredTableData() {
+          let self = this;
+          let system = this.queryForm.system;
+          let contact = this.queryForm.contact;
+          if (system === '' && contact === '') return self.tableData;
+          if (system === '') {
+              return self.tableData.filter(function(item) {
+                  return item.contact === contact;
+              });
+          }
+          if (contact === '') {
+              return item.system.indexOf(system) !== -1;
+          }
+          return self.tableData.filter(function(item) {
+              return item.system.indexOf(system) !== -1 && item.contact === contact;
+          });
+      }
+      get systemReadonly() {
+          return !this.ui.addRecord;
+      }
+
+      async mounted() {
+          this.loadAllSystems();
+          this.loadAllContacts();
+      }
+
+      async loadAllContacts() {
+          this.$http.get('/api/contacts/all').then((response) => { // Success
+              // console.log(response.body);
+              if (response.body.success === true) {
+                  let data = response.body.data;
+                  this.allContacts = [];
+                  let _this = this;
+                  data.forEach(function(item) {
+                      _this.allContacts.push({ label: item.name + '（' + item.contact + '）', value: item.contact });
+                  });
+              }
+          }, (response) => { // Failure
+          });
+      }
+      async loadAllSystems() {
+          console.log('*************************************');
+          this.loading = true;
+          this.$http.get('/api/systems/all').then((response) => { // Success
+              console.log(response.body);
+              if (response.body.success === true) {
+                  this.tableData = response.body.data;
+                  this.loading = false;
+              }
+          }, (response) => { // Failure
+          });
+      }
+
+      async handleAdd() {
+          //   this.loadAllContacts();
+          this.ui.dialogVisible = true;
+          this.ui.dialogReadonly = false;
+          this.ui.addRecord = true;
+          this.editForm.id = '';
+          this.editForm.system = '';
+          this.editForm.name = '';
+          this.editForm.contact = '';
+          this.editForm.description = '';
+      }
+      // handleQuery: function() {
+
+      // },
+      async handleView(row) {
+          this.ui.dialogVisible = true;
+          this.ui.dialogReadonly = true;
+          this.ui.addRecord = false;
+          this.editForm.id = row.id;
+          this.editForm.system = row.system;
+          this.editForm.name = row.name;
+          this.editForm.contact = row.contact;
+          this.editForm.description = row.description;
+      }
+
+      async handleDelete(row) {
+          this.$confirm('此操作将删除当前记录，是否继续？', '请确认', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' })
+              .then(() => {
+                  console.log('trying to delete');
+                  this.$http.delete('/api/systems/ids/' + row.id)
+                      .then(() => {
+                          this.$message({ type: 'info', message: '删除成功！' });
+                          this.loadAllSystems();
+                      }, () => {
+                          this.$message({ type: 'warning', message: '删除失败！' });
+                      });
+              }).catch(() => {
+                  console.log('Cancel delete...');
+              });
+      }
+      async handleEdit(row) {
+          this.ui.dialogVisible = true;
+          this.ui.dialogReadonly = false;
+          this.ui.addRecord = false;
+          this.editForm.id = row.id;
+          this.editForm.system = row.system;
+          this.editForm.name = row.name;
+          this.editForm.contact = row.contact;
+          this.editForm.description = row.description;
+      }
+      async handleSaveOrUpdate() {
+          // 0. 校验数据
+          if (this.$refs.editForm.validate((valid) => {
+              if (!valid) { // 1. 数据不符合校验规则，返回
+                  return;
+              }
+              // 2. 新增记录
+              if (this.ui.addRecord) {
+                  let record = this.editForm;
+                  console.log('Add record....', record);
+                  this.$http.post('/api/systems', record)
+                      .then(() => {
+                          this.$message({ type: 'info', message: '保存成功！' });
+                          this.ui.dialogVisible = false;
+                          this.loadAllSystems();
+                      }, () => {
+                          this.$message({ type: 'warning', message: '保存失败!' });
+                      });
+              } else { // 3. 更新记录
+                  console.log('Update record...');
+                  let record = this.editForm;
+                  this.$http.post('/api/systems/' + record.system, record)
+                      .then(() => {
+                          this.$message({ type: 'info', message: '保存成功！' });
+                          this.ui.dialogVisible = false;
+                          this.loadAllSystems();
+                      }, () => {
+                          this.$message({ type: 'warning', message: '保存失败!' });
+                      });
+              }
+          }));
+      }
 };
 </script>
