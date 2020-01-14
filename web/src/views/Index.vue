@@ -3,7 +3,7 @@
         <!-- Navigation //-->
         <el-breadcrumb separator="/" class="appnav">
             <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-        </el-breadcrumb>    
+        </el-breadcrumb>
 
         <!--Query Form  -->
         <el-form :inline="true" :model="queryForm" class="demo-form-inline">
@@ -11,9 +11,10 @@
                 <el-select v-model="queryForm.system" placeholder="所属系统" :clearable="true" filterable>
                     <el-option
                     v-for="item in allSystems"
+                    :key="item.label"
                     :label="item.label"
                     :value="item.value">
-                    </el-option>                   
+                    </el-option>
                 </el-select>
             </el-form-item>
             <el-form-item>
@@ -43,7 +44,7 @@
                   <el-dropdown-item><el-button type="primary" icon="delete" @click="handleDelete(row)">删除</el-button></el-dropdown-item>
                   <el-dropdown-item><el-button type="primary" icon="more" @click="handleRedirect(row)">更多</el-button></el-dropdown-item>
                 </el-dropdown-menu>
-              </el-dropdown>           
+              </el-dropdown>
             </el-table-column>
         </el-table>
 
@@ -51,25 +52,27 @@
         <el-dialog title="详细信息" v-model="ui.dialogVisible">
           <el-form :model="editForm" :rules="editFormRules" label-width="100px" ref="editForm">
             <el-form-item label="错误码" prop="code">
-    					<el-input v-model="editForm.code" auto-complete="off" v-bind:readonly="codeReadonly" ref="codeInput"></el-input>
-		    		</el-form-item>
+              <el-input v-model="editForm.code" auto-complete="off" v-bind:readonly="codeReadonly" ref="codeInput"></el-input>
+            </el-form-item>
             <el-form-item label="所属系统" prop="system">
                 <el-select v-model="editForm.system" placeholder="请选择系统" filterable>
                     <el-option
                     v-for="item in allSystems"
+                    :key="item.label"
                     :label="item.label"
                     :value="item.value">
                     </el-option>
-                </el-select>              
+                </el-select>
             </el-form-item>
             <el-form-item label="报警级别" prop="level">
                 <el-select v-model="editForm.level" placeholder="请选择报警级别" filterable>
                     <el-option
                     v-for="item in allLevels"
+                    :key="item.label"
                     :label="item.label"
                     :value="item.value">
                     </el-option>
-                </el-select>              
+                </el-select>
             </el-form-item>
             <el-form-item label="错误信息" prop="title">
               <el-input v-model="editForm.title" aria-autocomplete="off" v-bind:readonly="ui.dialogReadonly"></el-input>
@@ -84,138 +87,145 @@
                 <el-select v-model="editForm.contact" placeholder="请选择联系人" filterable>
                     <el-option
                     v-for="item in allContacts"
+                    :key="item.label"
                     :label="item.label"
                     :value="item.value">
                     </el-option>
-                </el-select>              
+                </el-select>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click.native="ui.dialogVisible = false">取 消</el-button>
             <el-button v-if="ui.dialogReadonly==false" type="primary" @click.native="handleSaveOrUpdate()" >确 定</el-button>
-          </div>          
+          </div>
         </el-dialog>
-    <div>
+    </div>
 </template>
 <script>
-export default {
-  data() {
-    return {
-      allSystems: [],
-      allContacts: [],
-      allLevels: [],
-      ui: {
-        // 对话框是否可见
-        dialogVisible: false,
-        // 对话框的内容是否允许编辑
-        dialogReadonly: true,
-        // 是新增记录还是编辑记录
-        addRecord: false,
-      },
-      editForm: {system:'', level:'', contact:''},
-      editFormRules: {
-        code: [{required: true, message: '请输入错误码', trigger: 'blur'}],
-        system: [{required: true, message: '请选择所属系统', trigger: 'blur'}],
-        level: [{required: true, message: '请选择报警级别', trigger: 'blur'}],
-        title: [{required: true, message: '请输入错误信息', trigger: 'blur'}],
-        description: [{required: true, message: '请输入详细信息', trigger: 'blur'}],
-        solution: [{required: true, message: '请输入解决办法', trigger: 'blur'}],
-        contact: [{required: true, message: '请选择联系人', trigger: 'blur'}],
-      },
-      queryForm: { code: '', system:'SYS'},
-      tableData: [],
-      loading: false
-    }
-  },
-  computed: {
-    filteredTableData: function() {
+import { Vue, Component } from 'vue-property-decorator';
+import * as Utils from '@/utils';
+
+@Component
+export default class Index extends Vue {
+  allSystems = [];
+  allContacts = [];
+  allLevels = [];
+  ui = {
+      // 对话框是否可见
+      dialogVisible: false,
+      // 对话框的内容是否允许编辑
+      dialogReadonly: true,
+      // 是新增记录还是编辑记录
+      addRecord: false
+  };
+  editForm = { system: '', level: '', contact: '' };
+  editFormRules = {
+      code: [{ required: true, message: '请输入错误码', trigger: 'blur' }],
+      system: [{ required: true, message: '请选择所属系统', trigger: 'blur' }],
+      level: [{ required: true, message: '请选择报警级别', trigger: 'blur' }],
+      title: [{ required: true, message: '请输入错误信息', trigger: 'blur' }],
+      description: [{ required: true, message: '请输入详细信息', trigger: 'blur' }],
+      solution: [{ required: true, message: '请输入解决办法', trigger: 'blur' }],
+      contact: [{ required: true, message: '请选择联系人', trigger: 'blur' }]
+  };
+  queryForm = { code: '', system: 'SYS' };
+  tableData = [];
+  loading = false;
+
+  get filteredTableData() {
       let self = this;
       var system = this.queryForm.system;
       var code = this.queryForm.code;
-      if (code=='' && system=='') return self.tableData;
-      if (code=='') {
-        return self.tableData.filter(function(item){
-          return item.system==system;
-        });
+      if (code === '' && system === '') return self.tableData;
+      if (code === '') {
+          return self.tableData.filter(function(item) {
+              return item.system === system;
+          });
       }
-      if (system=='') {
-        return self.tableData.filter(function(item){
-          return item.code.indexOf(code)!=-1;
-        });
+      if (system === '') {
+          return self.tableData.filter(function(item) {
+              return item.code.indexOf(code) !== -1;
+          });
       }
-      return self.tableData.filter(function(item){
-        return item.system==system && item.code.indexOf(code)!=-1;
+      return self.tableData.filter(function(item) {
+          return item.system === system && item.code.indexOf(code) !== -1;
       });
-    },
-    codeReadonly: function() {
+  }
+
+  get codeReadonly() {
       return !this.ui.addRecord;
-    }
-  },
+  }
 
-  mounted: function () {
-    this.loadAllCodes();
-    this.loadAllSystems();
-    this.loadAllLevels();
-    this.loadAllContacts();
-  },
+  async mounted() {
+      this.loadAllCodes();
+      this.loadAllSystems();
+      this.loadAllLevels();
+      this.loadAllContacts();
+  }
 
-  methods: {
-    loadAllSystems: function () {
+  async loadAllSystems() {
+      let result = await Utils.doGet('/api/systems/all');
+      if (result.success) {
+
+      }
       this.$http.get('/api/systems/all').then((response) => { // Success
-        if (response.body.success==true) {
-          let data = response.body.data;
-          let _this = this;
-          this.allSystems = [];
-          data.forEach(function(item){
-            _this.allSystems.push({label: item.name+"（"+item.system+"）", value: item.system})
-          });
-          _this.filteredAllSystems = _this.allSystems;
-        }
+          if (response.body.success === true) {
+              let data = response.body.data;
+              let _this = this;
+              this.allSystems = [];
+              data.forEach(function(item) {
+                  _this.allSystems.push({ label: item.name + '（' + item.system + '）', value: item.system });
+              });
+              _this.filteredAllSystems = _this.allSystems;
+          }
       }, (response) => { // Failure
 
-      })
-    },
-    loadAllContacts: function() {
+      });
+  }
+
+  async loadAllContacts() {
       this.$http.get('/api/contacts/all').then((response) => { // Success
-        // console.log(response.body);
-        if (response.body.success==true) {
-          let data = response.body.data;
-          this.allContacts = [];
-          let _this = this;
-          data.forEach(function(item){
-              _this.allContacts.push({label: item.name+"（"+item.contact+"）", value: item.contact});
-          });
-        }
+          // console.log(response.body);
+          if (response.body.success === true) {
+              let data = response.body.data;
+              this.allContacts = [];
+              let _this = this;
+              data.forEach(function(item) {
+                  _this.allContacts.push({ label: item.name + '（' + item.contact + '）', value: item.contact });
+              });
+          }
       }, (response) => { // Failure
-      })
-    },    
-    loadAllLevels: function () {
+      });
+  }
+
+  async loadAllLevels() {
       this.$http.get('/api/support/levels').then((response) => { // Success
-        if (response.body.success==true) {
-          let data = response.body.data;
-          let self = this;
-          this.allLevels = [];
-          data.forEach(function(item){
-            self.allLevels.push({label: item.name+"（"+item.level+"）", value: item.level})
-          });
-        }
+          if (response.body.success === true) {
+              let data = response.body.data;
+              let self = this;
+              this.allLevels = [];
+              data.forEach(function(item) {
+                  self.allLevels.push({ label: item.name + '（' + item.level + '）', value: item.level });
+              });
+          }
       }, (response) => { // Failure
 
-      })
-    },
-        
-    loadAllCodes: function() {
+      });
+  }
+
+  async loadAllCodes() {
       this.loading = true;
       this.$http.get('/api/codes/all').then((response) => { // Success
-        if (response.body.success==true) {
-          this.tableData = response.body.data;
-        }
-        this.loading = false;
+          if (response.body.success === true) {
+              this.tableData = response.body.data;
+          }
+          this.loading = false;
       }, (response) => { // Failure
 
-      })
-    },
-    handleView: function(row) {
+      });
+  }
+
+  async handleView(row) {
       this.ui.dialogVisible = true;
       this.ui.dialogReadonly = true;
       this.ui.addRecord = false;
@@ -227,8 +237,9 @@ export default {
       this.editForm.description = row.description;
       this.editForm.solution = row.solution;
       this.editForm.contact = row.contact;
-    },
-    handleEdit: function(row) {
+  }
+
+  async handleEdit(row) {
       // console.log(vm);
       this.ui.dialogVisible = true;
       this.ui.dialogReadonly = false;
@@ -241,8 +252,9 @@ export default {
       this.editForm.description = row.description;
       this.editForm.solution = row.solution;
       this.editForm.contact = row.contact;
-    },
-    handleAdd: function() {
+  }
+
+  async handleAdd() {
       this.ui.dialogVisible = true;
       this.ui.dialogReadonly = false;
       this.ui.addRecord = true;
@@ -254,55 +266,57 @@ export default {
       this.editForm.description = '';
       this.editForm.solution = '';
       this.editForm.contact = '';
-    },
-    handleDelete: function(row) {
-      this.$confirm('此操作将删除当前记录，是否继续？', '请确认', {confirmButtonText:'确定', cancelButtonText: '取消', type: 'warning'})
-        .then(() => {
-          this.$http.delete('/api/codes/ids/'+row.id)
-            .then(()=>{
-              this.$message({type:'info', message:'删除成功！'});
-              this.loadAllCodes();
-            }, ()=>{
-              this.$message({type:'warning', message:'删除失败！'});
-            });
-        }).catch(() => {
-          console.log('Cancel delete...');
-        });
-    },
-    handleRedirect: function(row) {
-      let code = row.code;
-      this.$router.push({path: '/codes/'+code});
-    },
-    handleSaveOrUpdate: function() {
-      // 0. 校验数据
-      if (this.$refs.editForm.validate((valid)=>{
-        if (!valid) // 1. 数据不符合校验规则，返回
-          return;
-        // 2. 新增记录
-        if (this.ui.addRecord) {
-          let record = this.editForm;
-          this.$http.post('/api/codes', record)
-            .then(()=>{
-              this.$message({type:'info', message:'保存成功！'});
-              this.ui.dialogVisible = false;
-              this.loadAllCodes();
-            }, ()=>{
-              this.$message({type:'warning', message:'保存失败!'});
-            });
-        }
-        else {  // 3. 更新记录
-          let record = this.editForm;
-          this.$http.post('/api/codes/'+record.code, record)
-            .then(()=>{
-              this.$message({type:'info', message:'保存成功！'});
-              this.ui.dialogVisible = false;
-              this.loadAllCodes();
-            }, ()=>{
-              this.$message({type:'warning', message:'保存失败!'});
-            });
-        }
-      }));
-    }
   }
-}
+
+  async handleDelete(row) {
+      this.$confirm('此操作将删除当前记录，是否继续？', '请确认', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' })
+          .then(() => {
+              this.$http.delete('/api/codes/ids/' + row.id)
+                  .then(() => {
+                      this.$message({ type: 'info', message: '删除成功！' });
+                      this.loadAllCodes();
+                  }, () => {
+                      this.$message({ type: 'warning', message: '删除失败！' });
+                  });
+          }).catch(() => {
+              console.log('Cancel delete...');
+          });
+  }
+
+  async handleRedirect(row) {
+      let code = row.code;
+      this.$router.push({ path: '/codes/' + code });
+  }
+
+  async handleSaveOrUpdate() {
+      // 0. 校验数据
+      if (this.$refs.editForm.validate((valid) => {
+          if (!valid) { // 1. 数据不符合校验规则，返回
+              return;
+          }
+          // 2. 新增记录
+          if (this.ui.addRecord) {
+              let record = this.editForm;
+              this.$http.post('/api/codes', record)
+                  .then(() => {
+                      this.$message({ type: 'info', message: '保存成功！' });
+                      this.ui.dialogVisible = false;
+                      this.loadAllCodes();
+                  }, () => {
+                      this.$message({ type: 'warning', message: '保存失败!' });
+                  });
+          } else { // 3. 更新记录
+              let record = this.editForm;
+              this.$http.post('/api/codes/' + record.code, record)
+                  .then(() => {
+                      this.$message({ type: 'info', message: '保存成功！' });
+                      this.ui.dialogVisible = false;
+                      this.loadAllCodes();
+                  }, () => {
+                      this.$message({ type: 'warning', message: '保存失败!' });
+                  });
+          }
+      }));
+  }
+};
 </script>

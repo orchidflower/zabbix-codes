@@ -1,39 +1,35 @@
 {
-  "name": "web_content",
-  "version": "1.0.0",
-  "description": "Zabbix Codes Front-end WebContent",
-  "main": "index.js",
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack-dev-server --content-base=./views --inline --hot"
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
   },
-  "author": "limin.zhang",
-  "license": "ISC",
   "dependencies": {
-    "vue": "^2.1.6",
-    "vue-awesome": "^2.0.3",
-    "vue-resource": "^1.0.3",
-    "vue-router": "^2.1.1"
+    "axios": "^0.19.1",
+    "core-js": "^3.4.4",
+    "element-ui": "^2.13.0",
+    "json-bigint": "^0.3.0",
+    "moment": "^2.24.0",
+    "vue": "^2.6.10",
+    "vue-awesome": "^4.0.2",
+    "vue-class-component": "^7.0.2",
+    "vue-property-decorator": "^8.3.0",
+    "vue-router": "^3.1.3"
   },
   "devDependencies": {
-    "babel": "^6.5.2",
-    "babel-core": "^6.20.0",
-    "babel-loader": "^6.2.10",
-    "babel-plugin-transform-runtime": "^6.15.0",
-    "babel-polyfill": "^6.20.0",
-    "babel-preset-es2015": "^6.18.0",
-    "babel-preset-stage-0": "^6.16.0",
-    "babel-runtime": "^6.20.0",
-    "css-loader": "^0.26.1",
-    "element-ui": "^1.0.7",
-    "file-loader": "^0.9.0",
-    "icon-maker-loader": "^0.1.7",
-    "style-loader": "^0.13.1",
-    "vue-hot-reload-api": "^2.0.6",
-    "vue-html-loader": "^1.2.3",
-    "vue-loader": "^10.0.2",
-    "vue-template-compiler": "^2.1.6",
-    "webpack": "^1.14.0",
-    "webpack-dev-server": "^1.16.2"
+    "@vue/cli-plugin-babel": "^4.1.0",
+    "@vue/cli-plugin-eslint": "^4.1.0",
+    "@vue/cli-plugin-router": "^4.1.0",
+    "@vue/cli-plugin-typescript": "^4.1.0",
+    "@vue/cli-service": "^4.1.0",
+    "@vue/eslint-config-standard": "^4.0.0",
+    "@vue/eslint-config-typescript": "^4.0.0",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "typescript": "~3.5.3",
+    "vue-template-compiler": "^2.6.10"
   }
 }

@@ -1,16 +1,14 @@
 {
 	"mysql": {
-		"host": "10.1.22.25",
+		"host": "192.168.2.231",
 		"port": "3306",
 		"user": "root",
-		"password": "lydsec",
+		"password": "password",
 		"database": "zabbix_codes"
 	},
 	"redis": {
-		"host": "10.1.22.25",
+		"host": "192.168.2.231",
 		"port": "6379",
-		// "user": "",
-		// "password": "",
 		"database": "4"
 	}
 }

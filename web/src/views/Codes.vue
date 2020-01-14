@@ -54,7 +54,7 @@
                         <el-col :span="20">
                             <div class="text item">
                                 {{code.contactname}}（{{code.contact}}）<br>
-                                <span class="description">                                
+                                <span class="description">
                                     <icon name="mobile" scale="1.5" class="icon"></icon>： {{code.mobile}} <br>
                                     <icon name="qq" class="icon"></icon>： {{code.qq}} <br>
                                     <icon name="weixin" class="icon"></icon>： {{code.weixin}}
@@ -69,54 +69,54 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import Icon from 'vue-awesome/components/Icon.vue'
-import 'vue-awesome/icons'
+import Vue from 'vue';
+import Icon from 'vue-awesome/components/Icon.vue';
+import 'vue-awesome/icons';
 // import 'vue-awesome/icons/qq'
 // import 'vue-awesome/icons/mobile'
 // import 'vue-awesome/icons/weixin'
 Vue.component('Icon', Icon);
 
-    export default {
-        mounted : function () {
-            this.getCodeDetails();
-        },
-        watch: {
-            // 如果路由有变化，会再次执行该方法
-            '$route': 'getCodeDetails'
-        },
-        data() {
-            return {
-                code: {
-                    code: '',
-                    system: '',
-                    description: '',
-                    solution: ''
+export default {
+    mounted: function() {
+        this.getCodeDetails();
+    },
+    watch: {
+        // 如果路由有变化，会再次执行该方法
+        '$route': 'getCodeDetails'
+    },
+    data() {
+        return {
+            code: {
+                code: '',
+                system: '',
+                description: '',
+                solution: ''
+            }
+        };
+    },
+    methods: {
+        getCodeDetails: function() {
+            console.log(this.$route.params.code);
+            console.log('Hello..........................');
+
+            this.$http.get('/api/codes/' + this.$route.params.code).then((response) => {
+                console.log(response.body);
+                if (response.body.success) { // success callback
+                    console.log(response.body.data);
+                    this.code = response.body.data;
+                } else {
+                    var ret = {};
+                    ret.code = 'ERR';
+                    ret.system = 'ERR';
+                    ret.description = response.body.message;
+                    this.code = ret;
                 }
-            }
-        },
-        methods: {
-            getCodeDetails :function() {
-                console.log(this.$route.params.code);
-                console.log("Hello..........................");
-                
-                this.$http.get('/api/codes/' + this.$route.params.code).then((response) => {
-                    console.log(response.body);
-                    if (response.body.success) {    // success callback
-                        console.log(response.body.data);
-                        return this.code = response.body.data;
-                    } else {
-                        var ret = {};
-                        ret.code = 'ERR';
-                        ret.system = 'ERR';
-                        ret.description = response.body.message;
-                        this.code = ret;
-                    }
-                }, (response) => {
-                });
-            }
+            }, (response) => {
+            });
         }
     }
+};
 </script>
 
 <style>
