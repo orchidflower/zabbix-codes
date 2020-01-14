@@ -20,7 +20,7 @@
                         <el-col :span="20"><div class="text item">{{code.title}}</div></el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="4"><div class="text item"><icon name="commenting" class="icon"></icon>详细信息：</div></el-col>
+                        <el-col :span="4"><div class="text item"><icon name="comment" class="icon"></icon>详细信息：</div></el-col>
                         <el-col :span="20"><div class="text item">{{code.description}}</div></el-col>
                     </el-row>
                     <el-row>
@@ -34,7 +34,7 @@
                         </div></el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="4"><div class="text item"><icon name="warning" class="icon"></icon>警告级别：</div></el-col>
+                        <el-col :span="4"><div class="text item"><icon name="exclamation-triangle" class="icon"></icon>警告级别：</div></el-col>
                         <el-col :span="20">
                             <div class="text item">
                                 {{code.levelname}} (<b>{{code.level}}</b>)<br>
@@ -56,8 +56,8 @@
                                 {{code.contactname}}（{{code.contact}}）<br>
                                 <span class="description">
                                     <icon name="mobile" scale="1.5" class="icon"></icon>： {{code.mobile}} <br>
-                                    <icon name="qq" class="icon"></icon>： {{code.qq}} <br>
-                                    <icon name="weixin" class="icon"></icon>： {{code.weixin}}
+                                    <icon name="brands/qq" class="icon"></icon>： {{code.qq}} <br>
+                                    <icon name="brands/weixin" class="icon"></icon>： {{code.weixin}}
                                 </span>
                             </div>
                         </el-col>
@@ -68,9 +68,9 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import * as Utils from '@/utils';
+import * as Utils from '../utils';
 
 import Icon from 'vue-awesome/components/Icon.vue';
 import 'vue-awesome/icons';
@@ -79,7 +79,11 @@ import 'vue-awesome/icons';
 // import 'vue-awesome/icons/weixin'
 Vue.component('Icon', Icon);
 
-@Component
+@Component({
+    components: {
+        Icon
+    }
+})
 export default class Codes extends Vue {
     code = {
         code: '',
@@ -100,15 +104,15 @@ export default class Codes extends Vue {
         console.log(this.$route.params.code);
         console.log('Hello..........................');
 
-        let result = await Utils.doGet('/api/codes/' + this.$route.params.code);
+        let result = await Utils.doGet(this, '/api/codes/' + this.$route.params.code);
         if (result.success) {
             console.log(result.data);
             this.code = result.data;
         } else {
-            var ret = {};
+            var ret: any = {};
             ret.code = 'ERR';
             ret.system = 'ERR';
-            ret.description = response.body.message;
+            ret.description = result.message;
             this.code = ret;
         }
     }

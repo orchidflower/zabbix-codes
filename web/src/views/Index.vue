@@ -143,16 +143,16 @@ export default class Index extends Vue {
       var code = this.queryForm.code;
       if (code === '' && system === '') return self.tableData;
       if (code === '') {
-          return self.tableData.filter(function(item) {
+          return self.tableData.filter(function(item: any) {
               return item.system === system;
           });
       }
       if (system === '') {
-          return self.tableData.filter(function(item) {
+          return self.tableData.filter(function(item: any) {
               return item.code.indexOf(code) !== -1;
           });
       }
-      return self.tableData.filter(function(item) {
+      return self.tableData.filter(function(item: any) {
           return item.system === system && item.code.indexOf(code) !== -1;
       });
   }
@@ -215,7 +215,7 @@ export default class Index extends Vue {
       this.editForm.contact = row.contact;
   }
 
-  async handleEdit(row) {
+  async handleEdit(row: any) {
       // console.log(vm);
       this.ui.dialogVisible = true;
       this.ui.dialogReadonly = false;
@@ -244,7 +244,7 @@ export default class Index extends Vue {
       this.editForm.contact = '';
   }
 
-  async handleDelete(row) {
+  async handleDelete(row: any) {
       let confirmed = await Utils.confirm(this, '此操作将删除当前记录，是否继续？', '请确认');
       if (confirmed) {
           let result = await Utils.doDelete(this, '/api/codes/ids/' + row.id);
@@ -256,7 +256,7 @@ export default class Index extends Vue {
       }
   }
 
-  async handleRedirect(row) {
+  async handleRedirect(row: any) {
       let code = row.code;
       this.$router.push({ path: '/codes/' + code });
   }
