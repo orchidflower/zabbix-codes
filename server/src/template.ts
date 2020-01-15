@@ -43,6 +43,5 @@ async function init() {
 
 export function renderHtml(fn: string, data: any) {
     let template = views.get(fn);
-    console.log(template);
     return Mustache.render(template, data);
 }
