@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "ts-node-dev ./src/app.ts",
-    "build": "rm -rf dist/* && tsc",
-    "start": "node ./bin/www"
+    "build": "rm -rf dist/* && tsc"
   },
   "dependencies": {
     "@types/config": "^0.0.36",
@@ -18,13 +17,7 @@
     "@types/mysql": "^2.15.8",
     "@types/node": "^13.1.6",
     "@types/redis": "^2.8.14",
-    "bluebird": "^3.4.7",
-    "co": "^4.6.0",
-    "co-express": "^1.2.2",
     "config": "^3.2.4",
-    "cookie-parser": "~1.4.3",
-    "debug": "~2.2.0",
-    "express": "~4.14.0",
     "format": "^0.2.2",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.2.1",
@@ -33,13 +26,12 @@
     "log4js": "^6.1.0",
     "mustache": "^3.2.1",
     "mysql": "^2.17.1",
-    "node-mysql": "^0.4.2",
     "redis": "^2.8.0",
-    "serve-favicon": "~2.3.0",
-    "swagger-jsdoc": "^3.5.0",
+    "swagger-jsdoc": "^3.5.0"
+  },
+  "devDependencies": {
     "ts-node": "^8.6.2",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.7.4"
-  },
-  "devDependencies": {}
+  }
 }
