@@ -3,7 +3,7 @@ userLocal = true;
 
 // vue.config.js
 module.exports = {
-    // outputDir: '../admin-server/src/main/resources/static/',
+    outputDir: '../server/public',
     productionSourceMap: false,
     css: {
         sourceMap: false
