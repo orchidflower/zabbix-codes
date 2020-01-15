@@ -80,6 +80,13 @@
   dependencies:
     "@types/koa" "*"
 
+"@types/koa-mount@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.npm.taobao.org/@types/koa-mount/download/@types/koa-mount-4.0.0.tgz#aa0505763c0d20bf4a16cdec0d9ccd2f4f2d2a86"
+  integrity sha1-qgUFdjwNIL9KFs3sDZzNL08tKoY=
+  dependencies:
+    "@types/koa" "*"
+
 "@types/koa-router@^7.4.0":
   version "7.4.0"
   resolved "https://registry.npm.taobao.org/@types/koa-router/download/@types/koa-router-7.4.0.tgz#4a5f48ca4432281f7429faedd9510c20945939dc"
@@ -361,7 +368,7 @@ debug@^3.1.0:
   dependencies:
     ms "^2.1.1"
 
-debug@^4.1.1:
+debug@^4.0.1, debug@^4.1.1:
   version "4.1.1"
   resolved "https://registry.npm.taobao.org/debug/download/debug-4.1.1.tgz#3b72260255109c6b589cee050f1d516139664791"
   integrity sha1-O3ImAlUQnGtYnO4FDx1RYTlmR5E=
@@ -715,6 +722,14 @@ koa-convert@^1.2.0:
   dependencies:
     co "^4.6.0"
     koa-compose "^3.0.0"
+
+koa-mount@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npm.taobao.org/koa-mount/download/koa-mount-4.0.0.tgz#e0265e58198e1a14ef889514c607254ff386329c"
+  integrity sha1-4CZeWBmOGhTviJUUxgclT/OGMpw=
+  dependencies:
+    debug "^4.0.1"
+    koa-compose "^4.1.0"
 
 koa-router@^7.4.0:
   version "7.4.0"

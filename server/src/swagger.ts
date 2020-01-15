@@ -1,6 +1,7 @@
 import * as Koa from 'koa';
 import * as KoaRouter from 'koa-router';
 import * as KoaStatic from 'koa-static';
+import * as KoaMount from 'koa-mount';
 import * as services from './services';
 import {renderHtml} from './template';
 const swaggerJSDoc = require('swagger-jsdoc');
@@ -65,6 +66,8 @@ export async function init(app: Koa) {
     });
 
     // Use public as root directory
-    app.use(KoaStatic('./public'));
+    app.use(KoaMount('/static', KoaStatic('./public/static')));
+    app.use(KoaMount('/swagger', KoaStatic('./public/swagger')));
+    app.use(KoaMount('/', KoaStatic('./public/dist')));
     app.use(router.routes());
 }
