@@ -222,7 +222,7 @@ export default class Systems extends Vue {
           } else { // 3. 更新记录
               console.log('Update record...');
               let record = this.editForm;
-              let result = await Utils.doPost(this, '/api/system/' + record.system, record);
+              let result = await Utils.doPost(this, '/api/systems/' + record.system, record);
               if (result.success) {
                   await Utils.showSuccess('保存成功！');
                   this.ui.dialogVisible = false;

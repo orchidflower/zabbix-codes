@@ -1,7 +1,10 @@
 import * as Koa from 'koa';
 import * as KoaRouter from 'koa-router';
 import * as KoaStatic from 'koa-static';
+import * as services from './services';
+import {renderHtml} from './template';
 const swaggerJSDoc = require('swagger-jsdoc');
+import {returnResponse, returnSuccess, buildSuccess} from './resp';
 // const Koa = require('koa');
 // const KoaRouter = require('koa-router');
 // const KoaStatic = require('koa-static');
@@ -37,7 +40,7 @@ export async function init(app: Koa) {
               }
           ]
         },
-        apis: ['./routes/*.ts'], // Path to the API docs
+        apis: ['./src/routes/*.ts'], // Path to the API docs
       };
 
       // Initialize swagger-jsdoc -> returns validated swagger spec in json format
@@ -46,10 +49,22 @@ export async function init(app: Koa) {
     router.get('/swagger/api-docs.json', async (ctx: Koa.Context, next: any) => {
         ctx.set('Content-Type', 'application/json')
         ctx.body = swaggerSpec;
-        await next();
+    });
+
+    router.get('/codes/:code', async (ctx, next) => {
+        let code = ctx.params.code;
+        let rows = await services.queryByCode(code);
+        if (rows==null) {
+          let ret = {success: false, message: '没有相关记录'}
+          return returnResponse(ctx, ret);
+        }
+        // let ret = {success: true, data: rows};
+        // return returnResponse(ctx, ret);
+        ctx.set('Context-Type', 'application/html');
+        ctx.body = renderHtml('codes.mustache', rows);
     });
 
     // Use public as root directory
-    app.use(KoaStatic('./public'));    
-    app.use(router.routes());    
+    app.use(KoaStatic('./public'));
+    app.use(router.routes());
 }
