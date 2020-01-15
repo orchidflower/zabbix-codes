@@ -5,47 +5,44 @@ const resp_1 = require("../resp");
 const services = require("../services");
 const log4js = require("log4js");
 const router = new KoaRouter({
-    prefix: '/api/codes'
+    prefix: '/api/contacts'
 });
-let logger = log4js.getLogger('codes');
+let logger = log4js.getLogger('contacts');
 // Model definition
 /**
  * @swagger
  * definitions:
- *   ZabbixCode:
+ *   ZabbixContact:
  *     type: object
  *     required:
- *       - code
- *       - system
- *       - title
- *       - level
- *       - description
- *       - solution
  *       - contact
+ *       - name
+ *       - title
+ *       - qq
+ *       - weixin
+ *       - mobile
  *     properties:
- *       code:
+ *       contact:
  *         type: string
- *       system:
+ *       name:
  *         type: string
  *       title:
  *         type: string
- *       level:
+ *       qq:
  *         type: string
- *       description:
+ *       weixin:
  *         type: string
- *       solution:
- *         type: string
- *       contact:
+ *       mobile:
  *         type: string
 */
 // Path Definition
 /**
  * @swagger
- * /codes/all:
+ * /contacts/all:
  *   get:
- *     description: Get all available codes
+ *     description: Get all available contacts
  *     tags:
- *       - Codes
+ *       - Contacts
  *     produces:
  *       - application/json
  *     responses:
@@ -53,37 +50,7 @@ let logger = log4js.getLogger('codes');
  *         description: check
  */
 router.get('/all', async (ctx, next) => {
-    var rows = await services.listAllCodes();
-    if (rows == null) {
-        let ret = { success: false, message: '没有相关记录' };
-        resp_1.returnResponse(ctx, ret);
-        return;
-    }
-    return resp_1.returnSuccess(ctx, rows);
-});
-/**
- * @swagger
- * /codes/{code}:
- *   get:
- *     description: Get one specific code information
- *     tags:
- *       - Codes
- *     produces:
- *       - application/json
- *     parameters:
- *       - name: code
- *         description: one code
- *         in: path
- *         required: true
- *         type: string
- *     responses:
- *       200:
- *         description: check
- */
-router.get('/:code', async (ctx, next) => {
-    let code = ctx.params.code;
-    logger.debug(code);
-    let rows = await services.queryByCode(code);
+    let rows = await services.listAllContacts();
     if (rows == null) {
         let ret = { success: false, message: '没有相关记录' };
         return resp_1.returnResponse(ctx, ret);
@@ -92,68 +59,98 @@ router.get('/:code', async (ctx, next) => {
 });
 /**
  * @swagger
- * /codes:
- *   post:
- *     description: Add one code
+ * /contacts/{contact}:
+ *   get:
+ *     description: Get one specific contact information
  *     tags:
- *       - Codes
+ *       - Contacts
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: contact
+ *         description: one contact
+ *         in: path
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: check
+ */
+router.get('/:contact', async (ctx, next) => {
+    logger.debug(ctx.params.contact);
+    let contact = ctx.params.contact;
+    let rows = await services.queryByContact(contact);
+    if (rows == null) {
+        let ret = { success: false, message: '没有相关记录' };
+        return resp_1.returnResponse(ctx, ret);
+    }
+    return resp_1.returnSuccess(ctx, rows);
+});
+/**
+ * @swagger
+ * /contacts:
+ *   post:
+ *     description: Add one contact
+ *     tags:
+ *       - Contacts
  *     produces:
  *       - application/json
  *     parameters:
  *       - name: body
- *         description: one code
+ *         description: one contact
  *         in: body
  *         required: true
  *         schema:
- *           $ref: '#/definitions/ZabbixCode'
+ *           $ref: '#/definitions/ZabbixContact'
  *     responses:
  *       200:
  *         description: check
  */
 router.post('/', async (ctx, next) => {
     logger.debug(ctx.request.body);
-    let rows = await services.addCode(ctx.request.body);
-    return resp_1.returnResponse(ctx, resp_1.buildSuccess(null));
+    let rows = await services.addContact(ctx.request.body);
+    let ret = { success: true };
+    return resp_1.returnResponse(ctx, ret);
 });
 /**
  * @swagger
- * /codes/{code}:
+ * /contacts/{contact}:
  *   post:
- *     description: Update one zabbix code
+ *     description: Update one zabbix contact
  *     tags:
- *       - Codes
+ *       - Contacts
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: code
- *         description: one code
+ *       - name: contact
+ *         description: one contact
  *         in: path
  *         required: true
  *         type: string
  *       - name: body
- *         description: one code
+ *         description: one contact
  *         in: body
  *         required: true
  *         schema:
- *           $ref: '#/definitions/ZabbixCode'
+ *           $ref: '#/definitions/ZabbixContact'
  *     responses:
  *       200:
  *         description: check
  */
-router.post('/:code', async (ctx, next) => {
-    logger.debug(ctx.params.code);
+router.post('/:contact', async (ctx, next) => {
+    logger.debug(ctx.params.contact);
     let record = ctx.request.body;
-    logger.debug(record);
-    let rows = await services.updateByCode(ctx.params.code, record);
-    return resp_1.returnResponse(ctx, resp_1.buildSuccess(null));
+    let rows = await services.updateContactByContact(ctx.params.contact, record);
+    let ret = { success: true };
+    return resp_1.returnResponse(ctx, ret);
 });
 /**
  * @swagger
- * /codes/ids/{id}:
+ * /contacts/ids/{id}:
  *   delete:
- *     description: Delete one specific code
+ *     description: Delete one specific contact
  *     tags:
- *       - Codes
+ *       - Contacts
  *     produces:
  *       - application/json
  *     parameters:
@@ -168,7 +165,8 @@ router.post('/:code', async (ctx, next) => {
  */
 router.delete('/ids/:id', async (ctx, next) => {
     logger.debug("the id is", ctx.params.id);
-    let rows = await services.deleteById(ctx.params.id);
-    return resp_1.returnResponse(ctx, resp_1.buildSuccess(null));
+    let rows = await services.deleteContactById(ctx.params.id);
+    var ret = { success: true };
+    return resp_1.returnResponse(ctx, ret);
 });
 exports.default = router;

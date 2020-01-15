@@ -4,51 +4,41 @@ import * as services from '../services';
 import * as log4js from 'log4js';
 
 const router = new KoaRouter({
-    prefix: '/api/codes'
+    prefix: '/api/systems'
 });
 
-let logger = log4js.getLogger('codes');
+let logger = log4js.getLogger('systems');
 
 // Model definition
 /**
  * @swagger
  * definitions:
- *   ZabbixCode:
+ *   ZabbixSystem:
  *     type: object
  *     required:
- *       - code
  *       - system
- *       - title
- *       - level
- *       - description
- *       - solution
+ *       - name
  *       - contact
+ *       - description
  *     properties:
- *       code:
- *         type: string
  *       system:
  *         type: string
- *       title:
- *         type: string
- *       level:
- *         type: string
- *       description:
- *         type: string
- *       solution:
+ *       name:
  *         type: string
  *       contact:
  *         type: string
+ *       description:
+ *         type: string
 */
-
 
 // Path Definition
 /**
  * @swagger
- * /codes/all:
+ * /systems/all:
  *   get:
- *     description: Get all available codes
+ *     description: Get all available systems
  *     tags:
- *       - Codes
+ *       - Systems
  *     produces:
  *       - application/json
  *     responses:
@@ -56,27 +46,27 @@ let logger = log4js.getLogger('codes');
  *         description: check
  */
 router.get('/all', async (ctx, next) => {
-  var rows = await services.listAllCodes();
+  let rows = await services.listAllSystems();
   if (rows==null) {
     let ret = {success: false, message: '没有相关记录'};
-    returnResponse(ctx, ret);
-    return;
+    return returnResponse(ctx, ret);
   }
-  return returnSuccess(ctx, rows);
+  let ret = {success: true, data: rows};
+  return returnResponse(ctx, ret);
 });
 
 /**
  * @swagger
- * /codes/{code}:
+ * /systems/{system}:
  *   get:
- *     description: Get one specific code information
+ *     description: Get one specific system information
  *     tags:
- *       - Codes
+ *       - Systems
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: code
- *         description: one code
+ *       - name: system
+ *         description: one system
  *         in: path
  *         required: true
  *         type: string
@@ -84,88 +74,90 @@ router.get('/all', async (ctx, next) => {
  *       200:
  *         description: check
  */
-router.get('/:code', async (ctx, next) => {
-    let code = ctx.params.code;
-    logger.debug(code);
-    let rows = await services.queryByCode(code);
-    if (rows==null) {
-        let ret = {success: false, message: '没有相关记录'}
-        return returnResponse(ctx, ret);
-    }
-    return returnSuccess(ctx, rows);
+router.get('/:system', async (ctx, next) => {
+  logger.debug(ctx.params.system);
+  let system = ctx.params.system;
+  let rows = await services.queryBySystem(system);
+  if (rows==null) {
+    let ret = {success: false, message: '没有相关记录'}
+    return returnResponse(ctx, ret);
+  }
+  var ret = {success: true, data: rows};
+  return returnResponse(ctx, ret);
 });
 
 /**
  * @swagger
- * /codes:
+ * /systems:
  *   post:
- *     description: Add one code
+ *     description: Add one system
  *     tags:
- *       - Codes
+ *       - Systems
  *     produces:
  *       - application/json
  *     parameters:
  *       - name: body
- *         description: one code
+ *         description: one system
  *         in: body
  *         required: true
  *         schema:
- *           $ref: '#/definitions/ZabbixCode'
+ *           $ref: '#/definitions/ZabbixSystem'
  *     responses:
  *       200:
  *         description: check
  */
 router.post('/', async (ctx, next) => {
-    logger.debug(ctx.request.body);
-    let rows = await services.addCode(ctx.request.body);
-    return returnResponse(ctx, buildSuccess(null));
+  logger.debug(ctx.request.body);
+  let rows = await services.addSystem(ctx.request.body);
+  var ret = {success: true};
+  return returnResponse(ctx, ret);
 });
 
 /**
  * @swagger
- * /codes/{code}:
+ * /systems/{system}:
  *   post:
- *     description: Update one zabbix code
+ *     description: Update one zabbix system
  *     tags:
- *       - Codes
+ *       - Systems
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: code
- *         description: one code
+ *       - name: system
+ *         description: one system
  *         in: path
  *         required: true
  *         type: string
  *       - name: body
- *         description: one code
+ *         description: one system
  *         in: body
  *         required: true
  *         schema:
- *           $ref: '#/definitions/ZabbixCode'
+ *           $ref: '#/definitions/ZabbixSystem'
  *     responses:
  *       200:
  *         description: check
  */
-router.post('/:code', async (ctx, next) => {
-  logger.debug(ctx.params.code);
+router.post('/:system', async (ctx, next) => {
+  logger.debug(ctx.params.system);
   let record = ctx.request.body;
-  logger.debug(record);
-  let rows =await services.updateByCode(ctx.params.code, record);
-  return returnResponse(ctx, buildSuccess(null));
+  let rows = await services.updateBySystem(ctx.params.system, record);
+  var ret = {success:true};
+  return returnResponse(ctx, ret);
 });
 
 /**
  * @swagger
- * /codes/ids/{id}:
+ * /systems/ids/{id}:
  *   delete:
- *     description: Delete one specific code
+ *     description: Delete one specific system
  *     tags:
- *       - Codes
+ *       - Systems
  *     produces:
  *       - application/json
  *     parameters:
  *       - name: id
- *         description: the id of one code
+ *         description: the id of one system
  *         in: path
  *         required: true
  *         type: string
@@ -174,9 +166,10 @@ router.post('/:code', async (ctx, next) => {
  *         description: check
  */
 router.delete('/ids/:id', async (ctx, next) => {
-    logger.debug("the id is", ctx.params.id);
-    let rows = await services.deleteById(ctx.params.id);
-    return returnResponse(ctx, buildSuccess(null));
+  logger.debug("the id is", ctx.params.id);
+  let rows = await services.deleteSystemById(ctx.params.id);
+  let ret = {success: true};
+  return returnResponse(ctx, ret);
 });
 
 export default router;

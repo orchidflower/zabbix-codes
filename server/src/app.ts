@@ -2,6 +2,9 @@ import * as Koa from 'koa';
 import * as KoaBodyParser from 'koa-bodyparser';
 import * as RouterSwagger from './swagger';
 import RouterCodes from './routes/codes';
+import RouterContacts from './routes/contacts';
+import RouterSupport from './routes/support';
+import RouterSystems from './routes/systems';
 import * as log4js from 'log4js';
 import {returnResponse} from './resp';
 
@@ -31,7 +34,10 @@ const init_server = async () => {
     const app : Koa = new Koa();
 
     app.use(KoaBodyParser());
+    app.use(RouterContacts.routes());
+    app.use(RouterSystems.routes());
     app.use(RouterCodes.routes());
+    app.use(RouterSupport.routes());
     await RouterSwagger.init(app);
     app.use(handler404);
 

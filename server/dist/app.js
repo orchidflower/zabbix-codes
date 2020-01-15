@@ -4,6 +4,9 @@ const Koa = require("koa");
 const KoaBodyParser = require("koa-bodyparser");
 const RouterSwagger = require("./swagger");
 const codes_1 = require("./routes/codes");
+const contacts_1 = require("./routes/contacts");
+const support_1 = require("./routes/support");
+const systems_1 = require("./routes/systems");
 const log4js = require("log4js");
 const resp_1 = require("./resp");
 // initialize log4js
@@ -27,7 +30,10 @@ const handler404 = (ctx) => {
 const init_server = async () => {
     const app = new Koa();
     app.use(KoaBodyParser());
+    app.use(contacts_1.default.routes());
+    app.use(systems_1.default.routes());
     app.use(codes_1.default.routes());
+    app.use(support_1.default.routes());
     await RouterSwagger.init(app);
     app.use(handler404);
     let listenPort = 3000;
