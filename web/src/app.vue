@@ -4,24 +4,11 @@
 	</div>
 </template>
 <style>
-	.appnav {
-		padding: 10px 0px 2px 0px;
-		margin-bottom: 5px;
-		border-bottom: 1px solid #EEEEEE;
-	}
-
-	.appheader {
-		padding-left: 50px;
-	}
-
-	.appfooter {
-		margin-top: 40px;
-		padding: 10px;
-	}
-
-	.description {
-		color:darkgray;
-	}
+  body {
+      font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+      font-size: 14px;
+      -webkit-font-smoothing: antialiased;
+  }
 </style>
 <script>
 export default {

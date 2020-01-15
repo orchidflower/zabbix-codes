@@ -36,19 +36,23 @@
             <!--<el-table-column prop="description" label="详细信息"></el-table-column>
             <el-table-column prop="solution" label="解决办法"></el-table-column>-->
             <el-table-column prop="contactname" label="联系人" width="100"></el-table-column>
-            <el-table-column label="操作" :context="_self" fixed="right" width="150">
+            <el-table-column label="操作" :context="_self" fixed="right" width="280">
               <template slot-scope="scope">
-                <el-dropdown trigger="click">
+                <el-button type="primary" icon="el-icon-info" @click="handleView(scope.row)"></el-button>
+                <el-button type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)"></el-button>
+                <el-button type="danger" icon="el-icon-delete" @click="handleDelete(scope.row)"></el-button>
+                <el-button type="primary" icon="el-icon-more" @click="handleRedirect(scope.row)"></el-button>
+                <!-- <el-dropdown trigger="click">
                   <el-button type="primary" size="small">
                     操作菜单<i class="el-icon-caret-bottom el-icon--right"></i>
                   </el-button>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item><el-button type="primary" icon="information" @click="handleView(scope.row)" >详细</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="primary" icon="edit" @click="handleEdit(scope.row)">编辑</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="primary" icon="delete" @click="handleDelete(scope.row)">删除</el-button></el-dropdown-item>
-                    <el-dropdown-item><el-button type="primary" icon="more" @click="handleRedirect(scope.row)">更多</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="primary" size="mini" icon="information" @click="handleView(scope.row)" >详细</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="primary" size="mini" icon="edit" @click="handleEdit(scope.row)">编辑</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="primary" size="mini" icon="delete" @click="handleDelete(scope.row)">删除</el-button></el-dropdown-item>
+                    <el-dropdown-item><el-button type="primary" size="mini" icon="more" @click="handleRedirect(scope.row)">更多</el-button></el-dropdown-item>
                   </el-dropdown-menu>
-                </el-dropdown>
+                </el-dropdown> -->
               </template>
             </el-table-column>
         </el-table>

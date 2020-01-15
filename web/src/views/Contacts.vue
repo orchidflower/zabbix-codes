@@ -22,9 +22,12 @@
             <el-table-column prop="mobile" label="手机号" width="120"></el-table-column>
             <el-table-column prop="qq" label="QQ" width="120"></el-table-column>
             <el-table-column prop="weixin" label="微信" width="120"></el-table-column>
-            <el-table-column label="操作" :context="_self" fixed="right" width="150">
+            <el-table-column label="操作" :context="_self" fixed="right" width="210">
               <template slot-scope="scope">
-                <el-dropdown trigger="click">
+                <el-button type="primary" icon="el-icon-info" @click="handleView(scope.row)"></el-button>
+                <el-button type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)"></el-button>
+                <el-button type="danger" icon="el-icon-delete" @click="handleDelete(scope.row)"></el-button>
+                <!-- <el-dropdown trigger="click">
                   <el-button type="primary" size="small">
                     操作菜单<i class="el-icon-caret-bottom el-icon--right"></i>
                   </el-button>
@@ -33,7 +36,7 @@
                     <el-dropdown-item><el-button type="primary" icon="edit" @click="handleEdit(scope.row)">编辑</el-button></el-dropdown-item>
                     <el-dropdown-item><el-button type="primary" icon="delete" @click="handleDelete(scope.row)">删除</el-button></el-dropdown-item>
                   </el-dropdown-menu>
-                </el-dropdown>
+                </el-dropdown> -->
               </template>
             </el-table-column>
         </el-table>

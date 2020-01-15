@@ -121,7 +121,8 @@ export default class Codes extends Vue {
 
 <style>
 .icon {
-    color:grey;
-    width: 32px;
+    color: darkgray;
+    width: 16px;
+    height: 16px;
 }
 </style>
