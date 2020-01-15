@@ -15,7 +15,8 @@ log4js.configure({
     categories: {
         cheese: { appenders: ['cheeseLogs'], level: 'error' },
         another: { appenders: ['console'], level: 'trace' },
-        default: { appenders: ['console', 'cheeseLogs'], level: 'trace' }
+        database: { appenders: ['console'], level: 'trace' },
+        default: { appenders: ['console'], level: 'trace' }
     }
 });
 console.log('Logger is initialized successfully.');
@@ -25,7 +26,7 @@ const handler404 = (ctx) => {
 };
 const init_server = async () => {
     const app = new Koa();
-    app.use(KoaBodyParser);
+    app.use(KoaBodyParser());
     app.use(codes_1.default.routes());
     await RouterSwagger.init(app);
     app.use(handler404);

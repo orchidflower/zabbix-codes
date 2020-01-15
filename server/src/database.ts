@@ -1,8 +1,7 @@
 import * as mysql from 'mysql';
-// const mysql = require('mysql');
-var config = require('config');
-var log4js = require('log4js');
-var format = require('format');
+import * as config from 'config';
+import * as log4js from 'log4js';
+import * as format from 'format';
 
 const logger = log4js.getLogger('database');
 
@@ -11,7 +10,7 @@ let pool: mysql.Pool = null;
 function init() {
     if (pool !== null) 
         return;
-    var dbConfig = config.get('mysql');
+    let dbConfig: any = config.get('mysql');
     pool = mysql.createPool({
         host: dbConfig.host,
         port: dbConfig.port,
@@ -24,13 +23,16 @@ function init() {
 }
 
 export async function query(sql: any, values?: any) {
-    if (values) {
-        let rows = await pool.query(sql, values);
-        return rows;
-    } else {
-        let rows = await pool.query(sql);
-        return rows;    
-    }
+    let promise = new Promise( (resolve, reject) => {
+        pool.query(sql, values, function(error, results, fields) {
+            if (error) {
+                reject('Failed to query. ' + error);
+                return;
+            }
+            resolve(results);
+        });
+    });
+    return promise;
 }
 
 // var query=function *(sql, callback) {

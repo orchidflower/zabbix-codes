@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var db = require("./database");
+// var db = require("./database");
+const db = require("./database");
 var log4js = require('log4js');
 var redis = require('./cacheservices');
 let logger = log4js.getLogger('services');

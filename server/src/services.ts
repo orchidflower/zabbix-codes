@@ -1,4 +1,5 @@
-var db = require("./database");
+// var db = require("./database");
+import * as db from './database';
 var log4js = require('log4js');
 var redis = require('./cacheservices');
 
