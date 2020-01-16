@@ -1,6 +1,9 @@
 import * as Mustache from 'mustache';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as log4js from 'log4js';
+
+let logger = log4js.getLogger();
 
 let views = new Map<string, string>();
 
@@ -31,7 +34,7 @@ async function init() {
         let fn = path.join(dir, files[i]);
         if (fn.endsWith('.mustache')) {
             let content = await getTemplate(fn);
-            console.log(files[i]);
+            logger.info('Loading templated file: ', files[i]);
             views.set(files[i], content);
         }
     }

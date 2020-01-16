@@ -25,7 +25,7 @@ function init() {
         console.log("Error " + err);
     });
     redisClient.on("ready", function() {
-        logger.debug(format.vsprintf('Redis [%s:%s/%s] is connected and ready for use.', [redisConfig.host, redisConfig.port, redisConfig.database]));
+        logger.info(format.vsprintf('Redis [%s:%s/%s] is connected and ready for use.', [redisConfig.host, redisConfig.port, redisConfig.database]));
     });
 }
 

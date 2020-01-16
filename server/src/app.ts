@@ -1,33 +1,24 @@
 import * as Koa from 'koa';
+import * as Logger from './common/logger';
 import * as KoaBodyParser from 'koa-bodyparser';
 import * as RouterSwagger from './swagger';
 import RouterCodes from './routes/codes';
 import RouterContacts from './routes/contacts';
 import RouterSupport from './routes/support';
 import RouterSystems from './routes/systems';
-import * as log4js from 'log4js';
 import {returnResponse} from './resp';
 
-// initialize log4js
-log4js.configure({
-    appenders: {
-      cheeseLogs: { type: 'file', filename: 'cheese.log' },
-      console: { type: 'console' }
-    },
-    categories: {
-      cheese: { appenders: ['cheeseLogs'], level: 'error' },
-      another: { appenders: ['console'], level: 'trace' },
-      database: {appenders: ['console'], level: 'trace'},
-      default: { appenders: ['console'], level: 'trace' }
-    }
-  });
-console.log('Logger is initialized successfully.');
-
-let logger = log4js.getLogger('main');
+let logger = Logger.getLogger('main');
 
 const handler404 = (ctx: Koa.Context)=> {
-    return returnResponse(ctx, {success: 'false', message: 'not found'});
+    ctx.status = 404;
+    ctx.set('Content-Type', 'application/json');
+    ctx.body = {success: 'false', message: 'not found'};
 };
+
+const handlerError = (ctx: Koa.Context, next: any) => {
+    
+}
 
 
 const init_server = async () => {
