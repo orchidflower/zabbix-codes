@@ -31,7 +31,18 @@ function init() {
 init();
 
 export async function store(key: string, value: any) {
-
+    let promise = new Promise((resolve, reject) => {
+        redisClient.set(key, JSON.stringify(value), function (err, res) {
+            if (err!=null) {
+                logger.error('Failed to store key: %s, value: %s', key, value, err);
+                reject('Failed to store key ' + err);
+            } else {
+                logger.debug(res);
+                resolve(res);
+            }
+        })
+    });
+    return promise;
 }
 
 export async function storeTtl(key: string, value: any, ttlInSeconds: number) {
