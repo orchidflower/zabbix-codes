@@ -15,14 +15,13 @@ Zabbix中的报警码可以通过本系统查询如下内容：
 
 # 3. 如何开始开发
 ## 3.1 启动后台
-首先确保`Node.js`,`npm`已经安装配置好。然后运行`npm install`安装依赖库。然后执行：`npm start`启动后台服务。
+首先确保`Node.js`,`yarn`已经安装配置好。然后运行`yarn`安装依赖库。然后执行：`yarn dev`启动后台服务。
 
 ```
-cd zabbix_codes
-npm install
-npm start
-# 或者运行
-pm2-dev ./bin/www
+cd zabbix-codes
+cd server
+yarn
+yarn dev
 ```
 
 ## 3.2 启动前端
@@ -30,9 +29,9 @@ pm2-dev ./bin/www
 
 ```
 cd zabbix_codes
-cd web_content
-npm install
-npm start dev
+cd web
+yarn
+yarn serve
 ```
 
 
@@ -40,11 +39,11 @@ npm start dev
 TBC
 
 # 5. 架构概述
-本工程使用Node.js构建。主要用的依赖包有：
+本工程使用Node.js构建，使用了nodejs的async、await特性，需要nodejs本身的支持。主要用的依赖包有：
 
-* Express
-* tj/co + co-Express
+* Koajs
 * mysqljs/mysql
+* redis
 * log4js
 * swagger-jsdoc
 * swagger-ui
