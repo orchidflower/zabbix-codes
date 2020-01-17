@@ -3,7 +3,7 @@ import * as KoaRouter from 'koa-router';
 import * as KoaStatic from 'koa-static';
 import * as KoaMount from 'koa-mount';
 import * as services from './services';
-import {renderHtml} from './template';
+import {renderHtml} from './common/template';
 const swaggerJSDoc = require('swagger-jsdoc');
 import {returnResponse, returnSuccess, buildSuccess} from './resp';
 // const Koa = require('koa');
@@ -59,10 +59,7 @@ export async function init(app: Koa) {
           let ret = {success: false, message: '没有相关记录'}
           return returnResponse(ctx, ret);
         }
-        // let ret = {success: true, data: rows};
-        // return returnResponse(ctx, ret);
-        ctx.set('Context-Type', 'application/html');
-        ctx.body = renderHtml('codes.mustache', rows);
+        renderHtml(ctx, 'codes', rows);
     });
 
     // Use public as root directory

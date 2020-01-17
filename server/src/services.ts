@@ -29,7 +29,7 @@ export async function queryByCode(code: any) {
                d.name as levelname, a.description, solution, a.contact as contact, 
                c.name as contactname, d.description as leveldescription, c.qq, c.weixin, c.mobile, 
                b.contact as systemcontact, b.description as systemdescription
-               from ZABBIX_CODES as a, ZABBIX_SYSTEMS as b, ZABBIX_CONTACTS as c, ZABBIX_LEVELS as d
+               from ZABBIX_CODES1 as a, ZABBIX_SYSTEMS as b, ZABBIX_CONTACTS as c, ZABBIX_LEVELS as d
                where a.system=b.system and a.contact=c.contact and a.level=d.level and code = ?`;
     let values = [code];
     let rows = await db.queryRows(sql, values);

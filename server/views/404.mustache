@@ -19,15 +19,12 @@
 <body>
 <div class="pure-g" style="margin-top: 25px">
 	<div class="pure-u-1 title">
-		<p>OOPS! - Error happened!</p>
+		<p>OOPS! - Could not Find it</p>
 	</div>
 	<div class="pure-u-1 title">
-		<img src="/static/images/500.png" onclick="document.getElementById('errorStack').style.display='block';">
+		<img src="/static/images/404.png" onclick="document.getElementById('errorMsg').style.display='block';">
 	</div>
-	<div class="pure-u-1" style="display: block" id="errorMsg">
-		<pre>{{error.message}}</pre>
-	<div>
-	<div class="pure-u-1" style="display: none" id="errorStack">
+	<div class="pure-u-1" style="display: none" id="errorMsg">
 		<pre>{{error.stack}}</pre>
 	<div>
 </div>

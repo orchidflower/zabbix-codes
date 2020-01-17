@@ -27,11 +27,11 @@ export async function queryRows(sql: string, values?: any[]): Promise<any[]> {
     let promise : Promise<any[]> = new Promise( (resolve, reject) => {
         pool.query(sql, values, function(error, results: any[], fields) {
             if (error) {
-                reject('Failed to query. ' + error);
-                return;
+                reject(error);
+            } else {
+                console.log(results);
+                resolve(results);
             }
-            console.log(results);
-            resolve(results);
         });
     });
     return promise;
@@ -41,11 +41,11 @@ export async function insertRows(sql: string, values?: any[]): Promise<{affected
     let promise: Promise<{affectedRows: number, insertId: number}> = new Promise( (resolve, reject) => {
         pool.query(sql, values, function(error, results: {affectedRows: number, insertId: number}, fields) {
             if (error) {
-                reject('Failed to query. ' + error);
-                return;
+                reject(error);
+            } else {
+                console.log(results);
+                resolve(results);    
             }
-            console.log(results);
-            resolve(results);
         })
     });
     return promise;
@@ -55,11 +55,11 @@ export async function updateRows(sql: string, values?: any[]): Promise<{affected
     let promise: Promise<{affectedRows: number}> = new Promise( (resolve, reject) => {
         pool.query(sql, values, function(error, results: {affectedRows: number}, fields) {
             if (error) {
-                reject('Failed to query. ' + error);
-                return;
+                reject(error);
+            } else {
+                console.log(results);
+                resolve(results);    
             }
-            console.log(results);
-            resolve(results);
         })
     });
     return promise;
@@ -69,11 +69,11 @@ export async function deleteRows(sql: string, values?: any[]): Promise<{affected
     let promise: Promise<{affectedRows: number}> = new Promise( (resolve, reject) => {
         pool.query(sql, values, function(error, results: {affectedRows: number}, fields) {
             if (error) {
-                reject('Failed to query. ' + error);
-                return;
+                reject(error);
+            } else {
+                console.log(results);
+                resolve(results);    
             }
-            console.log(results);
-            resolve(results);
         })
     });
     return promise;
