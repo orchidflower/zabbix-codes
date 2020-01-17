@@ -5,12 +5,12 @@ export function buildSuccess(data?: any) {
     return ret;
 };
 
-export function returnSuccess(ctx: Koa.Context, data: any) {
+export function returnSuccess(ctx: Koa.ParameterizedContext, data: any) {
     ctx.set('Content-Type', 'application/json');
     ctx.body = buildSuccess(data);
 }
 
-export function returnResponse(ctx: Koa.Context, response: Object) {
+export function returnResponse(ctx: Koa.ParameterizedContext, response: Object) {
     ctx.set('Content-Type', 'application/json');
     ctx.body = response;
 }

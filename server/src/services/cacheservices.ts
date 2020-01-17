@@ -1,4 +1,4 @@
-import * as Cache from './common/cache';
+import * as Cache from '../common/cache';
 
 const PREFIX_CODE = "ZCODES:";
 const TTL_CODE = 30*60;

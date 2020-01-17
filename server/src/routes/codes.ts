@@ -1,6 +1,6 @@
 import * as KoaRouter from 'koa-router';
-import {returnResponse, returnSuccess, buildSuccess} from '../resp';
-import * as services from '../services';
+import {returnResponse, returnSuccess, buildSuccess} from '../utils/resp';
+import * as services from '../services/services';
 import * as log4js from 'log4js';
 
 const router = new KoaRouter({

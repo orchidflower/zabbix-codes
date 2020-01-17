@@ -1,13 +1,14 @@
 import * as Koa from 'koa';
 import * as Logger from './common/logger';
 import * as KoaBodyParser from 'koa-bodyparser';
-import * as RouterSwagger from './swagger';
 import * as KoaViews from 'koa-views';
 import * as path from 'path';
 import RouterCodes from './routes/codes';
 import RouterContacts from './routes/contacts';
 import RouterSupport from './routes/support';
 import RouterSystems from './routes/systems';
+import RouterSwagger from './routes/swagger';
+import * as RouterIndex from './routes/index';
 
 let logger = Logger.getLogger('main');
 
@@ -30,7 +31,6 @@ const handlerException = async (ctx: Koa.Context, next: any) => {
     }
 }
 
-
 const init_server = async () => {
     const app : Koa = new Koa();
 
@@ -44,7 +44,8 @@ const init_server = async () => {
     app.use(RouterSystems.routes());
     app.use(RouterCodes.routes());
     app.use(RouterSupport.routes());
-    await RouterSwagger.init(app);
+    app.use(RouterSwagger.routes());
+    await RouterIndex.init(app);
 
     let listenPort = 3000;
     logger.info(`Starting server on port ${ listenPort }...`);
