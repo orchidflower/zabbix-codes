@@ -79,17 +79,4 @@ export async function deleteRows(sql: string, values?: any[]): Promise<{affected
     return promise;
 }
 
-
-// var query=function *(sql, callback) {
-//     var rows = yield pool.queryAsync(sql);
-//     return rows;
-// }
-
-// var query=function *(sql, values, callback) {
-//     var rows = yield pool.queryAsync(sql, values);
-//     return rows;
-// }
-
 init();
-
-// module.exports.query = query;

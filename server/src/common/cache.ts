@@ -21,7 +21,7 @@ function init() {
     };
     redisClient = Redis.createClient(options);
     redisClient.on("error", function (err) {
-        console.log("Error " + err);
+        logger.error("Error occured. ", err);
     });
     redisClient.on("ready", function() {
         logger.info(format.vsprintf('Redis [%s:%s/%s] is connected and ready for use.', [redisConfig.host, redisConfig.port, redisConfig.database]));
@@ -35,7 +35,7 @@ export async function store(key: string, value: any) {
         redisClient.set(key, JSON.stringify(value), function (err, res) {
             if (err!=null) {
                 logger.error('Failed to store key: %s, value: %s', key, value, err);
-                reject('Failed to store key ' + err);
+                reject(err);
             } else {
                 logger.debug(res);
                 resolve(res);
@@ -50,7 +50,7 @@ export async function storeTtl(key: string, value: any, ttlInSeconds: number) {
         redisClient.setex(key, ttlInSeconds, JSON.stringify(value), function (err, res) {
             if (err!=null) {
                 logger.error('Failed to store key: %s, value: %s', key, value, err);
-                reject('Failed to store key ' + err);
+                reject(err);
             } else {
                 logger.debug(res);
                 resolve(res);
@@ -65,7 +65,7 @@ export async function load(key: string) {
         redisClient.get(key, function(err, res) {
             if (err!=null) {
                 logger.error('Failed to load key: %s.', key, err);
-                reject('Failed to load key ' + err);
+                reject(err);
             } else {
                 logger.debug(res);
                 resolve(JSON.parse(res));
@@ -81,7 +81,7 @@ export async function remove(key: string) {
         redisClient.del(key, function(err, res) {
             if (err!=null) {
                 logger.error('Failed to load key: %s.', key, err);
-                reject('Failed to load key ' + err);
+                reject(err);
             } else {
                 logger.debug(res);
                 resolve(res);
