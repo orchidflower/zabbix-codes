@@ -9,8 +9,8 @@ module.exports = {
     '@vue/typescript'
   ],
   rules: {
-    'no-console': 'off',
-    'no-debugger': 'off',
+    'no-console': 0,
+    'no-debugger': 0,
     "indent": ["warn", 4],
     "no-extra-semi": 'off',
     "semi": ["warn", "always"],
